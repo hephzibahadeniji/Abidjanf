@@ -2,15 +2,25 @@
 rm(list=ls())
 
 #directories
-Drive <- file.path(gsub("[\\]", "/", gsub("Documents", "", gsub("OneDrive", "", Sys.getenv("HOME")))))
-Drive <- file.path(gsub("[//]", "/", Drive))
-DriveDir <- file.path(Drive, "Urban Malaria Proj Dropbox", "urban_malaria")
-DataDir <- file.path(DriveDir, "data")
-AbidjanDir <-  file.path(DataDir, "abidjan")
-program_dat <- file.path(AbidjanDir, "program_data")
-ProjectDir <- file.path(DriveDir, "projects", "urban_microstratification", "Abidjan")
-plots <- file.path(ProjectDir, "plots")
-NASAdata <- file.path(AbidjanDir, "Autonome D_Abidjan")
+user <- Sys.getenv("USERNAME")
+
+if (user == "MGGVUS002"){
+  #directories
+  AbidjanDir <- "C:/Users//MGGVUS002/Dropbox/abidjan"
+  program_dat <- file.path(AbidjanDir, "program_data")
+  
+}else{
+  
+  Drive <- file.path(gsub("[\\]", "/", gsub("Documents", "", gsub("OneDrive", "", Sys.getenv("HOME")))))
+  Drive <- file.path(gsub("[//]", "/", Drive))
+  DriveDir <- file.path(Drive, "Urban Malaria Proj Dropbox", "urban_malaria")
+  DataDir <- file.path(DriveDir, "data")
+  AbidjanDir <-  file.path(DataDir, "abidjan")
+  program_dat <- file.path(AbidjanDir, "program_data")
+  ProjectDir <- file.path(DriveDir, "projects", "urban_microstratification", "Abidjan")
+  plots <- file.path(ProjectDir, "plots")
+  
+}
 
 
 list_of_packages <- c("RColorBrewer", "readr", "haven", "data.table",
