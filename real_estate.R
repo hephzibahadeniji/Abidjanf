@@ -41,11 +41,11 @@ real_estate_clean <- real_estate %>%
          classes = cut(price_square_meter, 
                      c(2008,  380000, 500000, 571428, 694737,
                        800000,  907912, 1000000,
-                       1150000, 1333334, 130000000)/100000,  
+                       1150000, 1333334, 52600000)/100000,  
                      labels = c("[0.0201, 3.8]", "(3.8, 5.0]", "(5.0, 5.8]",
                                 "(5.8, 7.0]", "(7.0, 8.0]", "(8.0, 9.1]",
                                 "(9.1, 10.0]", "(10.0, 11.5]", "(11.5, 13.4]",
-                                "(13.4, 1300.0]"), 
+                                "(13.4, 526]"), 
                      include.lowest = T )) %>% 
   drop_na(price_square_meter)
 
@@ -98,19 +98,17 @@ average_data <- health_districts_price %>%
          mean_classes = cut(average_hd, 
                        c(2008,  380000, 500000, 571428, 694737,
                          800000,  907912, 1000000,
-                         1150000, 1333334, 130000000)/100000, 
+                         1150000, 1333334, 52600000)/100000, 
                        labels = c("[0.0201, 3.8]", "(3.8, 5.0]", "(5.0, 5.8]",
                                   "(5.8, 7.0]", "(7.0, 8.0]", "(8.0, 9.1]",
                                   "(9.1, 10.0]", "(10.0, 11.5]", "(11.5, 13.4]",
-                                  "(13.4, 1300]"), include.lowest = T ))%>% 
+                                  "(13.4, 526]"), include.lowest = T ))%>% 
   drop_na(average_hd)
 
 
 
 
 ggplot() +
-  # Map needs fixing the new points distorted the map 
-  # Remove weird points or outliers 
   geom_sf(data = df_abidjan1, color = "black") +
   geom_sf(data = average_data, aes(geometry = geometry,
                                    color = mean_classes,
@@ -119,18 +117,18 @@ ggplot() +
                                            fill = classes, 
                                            color = classes), alpha = 0.5, size = 3) +
   geom_sf(data = slum_sf, aes(geometry = geometry), fill = "red", size = 4, shape = 25) +
-  geom_sf_text(data = slum_sf, aes(geometry = geometry, label = Slum.Name)) +
+  # geom_sf_text(data = slum_sf, aes(geometry = geometry, label = Slum.Name)) +
   labs(x = "", y = "", color = "", fill = "") +
   scale_fill_manual(values = palettes,
                     limits = c("[0.0201, 3.8]", "(3.8, 5.0]", "(5.0, 5.8]",
                                "(5.8, 7.0]", "(7.0, 8.0]", "(8.0, 9.1]",
                                "(9.1, 10.0]", "(10.0, 11.5]", "(11.5, 13.4]",
-                               "(13.4, 1300]")) +
+                               "(13.4, 526]")) +
   scale_color_manual(values = palettes,
                      limits = c("[0.0201, 3.8]", "(3.8, 5.0]", "(5.0, 5.8]",
                                 "(5.8, 7.0]", "(7.0, 8.0]", "(8.0, 9.1]",
                                 "(9.1, 10.0]", "(10.0, 11.5]", "(11.5, 13.4]",
-                                "(13.4, 1300]")) +
+                                "(13.4, 526]")) +
   scale_shape_manual(values = c(25),labels = c("Slum"))+
   map_theme()
 
