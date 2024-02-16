@@ -25,6 +25,8 @@ df_abidjan1 = st_intersection(Abi_shapefile[[7]], Abidjan)
 
 pattern2013 <- paste0("2013[0-9]+.tif")
 
+
+
 rainfall_2013 <- list.files(file.path(Rainfall2013_23), pattern = pattern2013, full.names = TRUE)
 
 # print(rainfall_2013)
@@ -38,7 +40,7 @@ raindata13 = rainfall_data13 %>%
                               fun = mean, df =TRUE)) %>%
   purrr::reduce(left_join, by = c("ID"))
 
-df_abidjan1$meanrain13 <- rowMeans(raindata13, na.rm=TRUE)
+df_abidjan1$meanrain13 <- rowMeans(raindata13[-1], na.rm=TRUE)
 
 rainfall_plotdata13 <- df_abidjan1 %>%
   sf::st_as_sf() %>%
@@ -75,6 +77,7 @@ print(rainfall_2014)
 
 avgrainfall  = list.files( file.path(RainfallPlus), 
                              pattern = ".tif", full.names = TRUE)
+
 avgrainfalldata = lapply(seq_along(avgrainfall), 
                        function(x) raster::raster(avgrainfall[[x]]))
 
@@ -107,11 +110,16 @@ ggplot(data = df_abidjan1) +
   map_theme()
 
 ####2013
+
 pattern2013 <- paste0("2013[0-9]+.tif")
+
+
 rainfall_2013b <- list.files(file.path(RainfallPlus), pattern = pattern2013, full.names = TRUE)
+
 
 rainfall_data13b = lapply(seq_along(rainfall_2013b), 
                          function(x) raster::raster(rainfall_2013b[[x]]))
+
 raindata13b = rainfall_data13b %>%
   purrr::map(~raster::extract(., df_abidjan1,
                               buffer = buffer,
@@ -194,7 +202,7 @@ selected_column <- df_abidjan1$avgrain15b
 Summary$avgrain2015b <- selected_column
 write.csv(Summary, "C:/Users/hp/Urban Malaria Proj Dropbox/urban_malaria/data/abidjan/Abidjan Data Variables.csv", row.names = FALSE)
 
-######2016
+###### 2016
 pattern2016 <- paste0("2016[0-9]+.tif")
 rainfall_2016b <- list.files(file.path(RainfallPlus), pattern = pattern2016, full.names = TRUE)
 
