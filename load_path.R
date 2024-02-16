@@ -4,7 +4,7 @@ rm(list=ls())
 #directories
 user <- Sys.getenv("USERNAME")
 
-if (user == "MGGVUS002"){
+if (user == "MGGVUS002" | user == ""){
   #directories
   AbidjanDir <- "C:/Users//MGGVUS002/Dropbox/abidjan"
   program_dat <- file.path(AbidjanDir, "program_data")
@@ -21,6 +21,29 @@ if (user == "MGGVUS002"){
   plots <- file.path(ProjectDir, "plots")
   
 }
+
+# other paths 
+
+NASAdata <- file.path(AbidjanDir, "Autonome D_Abidjan")
+Earthdata <- file.path(NASAdata, "EarthData")
+EVIkm <- file.path(Earthdata, "MODIS-TERRA_VegetationIndex_EVI_1km_Monthly_2013-23")
+EVIm <- file.path(Earthdata, "MODIS-TERRA_VegetationIndex_EVI_500m_16d_2013-23")
+NDVIkm <- file.path(Earthdata,"MODIS-TERRA_VegetationIndex_NDVI_1km_Monthly_2013-23")
+Rainfall2013_23 <- file.path(NASAdata, "Rainfall 2013-2023")
+Climatedata <- file.path(NASAdata, "ClimateSERV")
+Abidjanmap1 <- file.path(NASAdata, "Autonome D_Abidjan2.geojson")
+
+
+
+Abidjanmap <- st_read(Abidjanmap1)
+
+
+Abidjan = Abi_shapefile[[3]] %>%
+  filter(NAME_1 == "Abidjan")
+
+df_abidjan1 = st_intersection(Abi_shapefile[[7]], Abidjan)
+
+
 
 
 list_of_packages <- c("RColorBrewer", "readr", "haven", "data.table",
