@@ -1,6 +1,7 @@
 
 source("load_path.R", echo=FALSE) 
 
+RainfallPlus <- file.path(Climatedata, "Extracted_ClimeServ_CHIRPS_")
 
 
 ##############################################################################################################################################################
@@ -111,5 +112,69 @@ ggplot(data = df_abidjan1) +
   labs(title = "Average Rainfall", fill = "", x = NULL, y = NULL) +
   map_theme() 
 
+
+################################################################################
+########### TIME SERIES PLOTS##########################################
+##########################################################################
+
+summerised_rainfall <-read.csv(file.path(RainfallPlus, "all_rainfall_data.csv"))
+
+rainfall_data <- summerised_rainfall %>%
+  mutate(date = as.Date(paste(year, month, "01", sep = "-")))
+
+#plot time series per year
+
+ggplot(rainfall_data, aes(x = date, y = yearly_rainfall, color = NOM)) +
+  geom_line() +
+  scale_x_date(date_labels = "%Y", date_breaks = "1 year") +
+  labs(title = "Yearly Rainfall by Health District",
+       x = "Year",
+       y = "Yearly Rainfall",
+       color = "Health District") +
+  map_theme()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),  
+        axis.text.y = element_text(angle = 45, hjust = 1))
+
+#plot time series per month
+
+ggplot(rainfall_data, aes(x = date, y = monthly_rainfall, color = NOM)) +
+  geom_line() +
+  scale_x_date(date_labels = "%Y", date_breaks = "1 year") +
+  labs(title = "Monthly Rainfall by Health District",
+       x = "Year",
+       y = "Monthly Rainfall",
+       color = "Health District") +
+  map_theme()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),  
+        axis.text.y = element_text(angle = 45, hjust = 1))
+
+ggplot(rainfall_data, aes(x = date, y = monthly_rainfall, color = NOM)) +
+  geom_line() +
+  scale_x_date(date_labels = "%Y", date_breaks = "1 year") +
+  facet_wrap(~NOM)+
+  labs(title = "Monthly Rainfall in each Health District",
+       x = "Year",
+       y = "Monthly Rainfall",
+       color = "Health District") +
+  map_theme()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),  
+        axis.text.y = element_text(angle = 45, hjust = 1))
+
+################ individual health districts plot
+
+health_districts <- unique(rainfall_data$NOM)
+for (district in health_districts) {
+  district_data <- subset(rainfall_data, NOM == district)
+  
+  plot <- ggplot(data = district_data, aes(x = date, y = monthly_rainfall)) +
+    geom_line() +
+    labs(title = paste("Monthly Rainfall for", district),
+         x = "Date",
+         y = "Monthly Rainfall") +
+    map_theme()+
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),  
+          axis.text.y = element_text(angle = 45, hjust = 1))
+  print(plot)
+}
 
 
