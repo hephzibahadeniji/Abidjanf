@@ -42,10 +42,10 @@ new_column_names <- c("HealthDistrict", "IGBP Classification", "UMD Classificati
                       "LCCS3 Layer confidence", "LCCS1 land cover layer", "LCCS2 land use layer",
                       "LCCS3 surface hydrology layer", "Quality", "Land/Water Mask")
 
-#landcover_mode <- lapply(landcover_mode, function(df) {
- # names(df) <- new_column_names
-  #return(df)
-#})
+landcover_mode <- lapply(landcover_mode, function(df) {
+ names(df) <- new_column_names
+  return(df)
+})
 
 # cell Value translations
 translation_list <- list(
@@ -60,23 +60,6 @@ translation_list <- list(
   `Land/Water Mask`= c("1" = "Water", "2" = "Land"),
   `Quality` = c("0" = "Classified land", "1" = "Unclassified land", "2" = "Classified water", "3" = "Unclassified water", "4" = "Classified sea ice", "5" = "Misclassified water", "6" = "Omitted snow/ice", "7" = "Misclassified snow/ice", "8" = "Backfilled label", "9" = "Forest type changed", "10" = "No data")
 )
-
-
-
-# Rename columns in each dataframe
-landcover_mode <- purrr::map(landcover_mode, ~ {
-  names(.x) <- new_column_names
-  .x
-})
-
-# Apply translations to each dataframe
-landcover_mode <- purrr::map(landcover_mode, ~ {
-  purrr::modify_at(.x, intersect(names(.x), names(translation_list)), ~ {
-    ifelse(is.numeric(.x), translation_list[[.y]][as.character(.x)], .x)
-  })
-})
-
-
 
 landcover_mode <- lapply(landcover_mode, function(df) {
   for (col_name in names(df)) {
