@@ -1,5 +1,4 @@
-source("~/Abidjan/load_path.R", echo=FALSE)
-#source("C:/Users/hp/Abidjan/load_path.R", echo=FALSE) #leave commented#
+source("load_path.R", echo=FALSE)
 
 ###visualizing boundaries
 Region_bounds <-  file.path(AbidjanDir, "Region boundaries")
@@ -8,25 +7,13 @@ Department_bounds <-  file.path(AbidjanDir, "Department boundaries")
 
 
 reg_bounds <- st_read(file.path(Region_bounds, "Region boundaries.shp"))
-view(reg_bounds)
 dist_bounds <- st_read(file.path(District_bounds, "District boundaries.shp"))
-view(dist_bounds)
 dept_bounds <- st_read(file.path(Department_bounds, "Department boundaries.shp"))
-view(dept_bounds)
 
-Abidjan = Abi_shapefile[[3]] %>% filter(NAME_1 == "Abidjan")
-abidjan_map = st_intersection(Abi_shapefile[[7]], Abidjan)
+
+
 
 #####display boundaries
-
-ggplot() + 
-  #geom_sf(data = abidjan_map, color = "black", fill = "#ece9f7") +
-  #geom_sf(data = abidjan_map)+
-  #geom_sf(data = reg_bounds, color = "pink") +
-  geom_sf(data = dist_bounds, color = "lightblue",) +
-  #geom_sf(data = dept_bounds, color = "lightgreen",) +
-  labs(title = "Abidjan with district boundaries", fill = "", x = NULL, y = NULL) +
-  map_theme()
 
 ggplot(data = Abi_shapefile[[3]])+ 
   geom_sf(fill = 	"#ece9f7")+
@@ -61,7 +48,7 @@ view(water_way)
 
 ##### Water Bodies
 ggplot()+
-  geom_sf(data = abidjan_map, color = "darkgrey", fill = "white")+
+  geom_sf(data = df_abidjan1, color = "darkgrey", fill = "white")+
   geom_sf(data = water_body, aes(fill = sub_type))+
   scale_fill_manual(name = "Water Body Type", 
                     values = c("water" = "lightblue",   
@@ -76,10 +63,6 @@ ggplot()+
 
 
 
-#
-
-  
- 
 
 # Plot the map
 ggplot() +
