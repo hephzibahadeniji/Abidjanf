@@ -33,11 +33,30 @@ Rainfall2013_23 <- file.path(NASAdata, "Rainfall 2013-2023")
 Climatedata <- file.path(NASAdata, "ClimateSERV")
 
 Abidjanmap1 <- file.path(NASAdata, "Autonome D_Abidjan2.geojson")
+RainfallPlus <- file.path(Climatedata, "Extracted_ClimeServ_CHIRPS_")
+
+SmallsetDir <-  file.path(AbidjanDir, "Small settlement area")
+small_set <- st_read(file.path(SmallsetDir, "Small settlement area.shp"))
 
 
-list_of_packages <- c("RColorBrewer", "readr", "haven", "data.table",
-                      "ggplot2", "labelled", "tidyverse", "janitor",
-                      "readxl", "mapsf", "survey","srvyr",
+Region_bounds <-  file.path(AbidjanDir, "Region boundaries")
+District_bounds <-  file.path(AbidjanDir, "District boundaries")
+Department_bounds <-  file.path(AbidjanDir, "Department boundaries")
+
+
+########### ROADS
+
+major_roads <-  file.path(AbidjanDir, "Major road")
+residential_road <-  file.path(AbidjanDir, "Residential road")
+waterbody <-  file.path(AbidjanDir, "Waterbody")
+waterway <-  file.path(AbidjanDir, "Waterway")
+
+
+
+
+list_of_packages <- c("RColorBrewer", "readr", "haven", "data.table", "reshape",
+                      "ggplot2", "labelled", "tidyverse", "janitor", "terra",
+                      "readxl", "mapsf", "survey","srvyr", "plotly", "hdf5r",
                       "broom", "ggthemes", "ggrepel", "sjlabelled",
                       "ggplot2", "dplyr", "ggpubr", "sf", "viridis", "patchwork", 
                       "raster", "wordcloud", "ggwordcloud")

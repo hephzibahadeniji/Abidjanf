@@ -1,9 +1,6 @@
 source("load_path.R", echo=FALSE)
 
 ###visualizing boundaries
-Region_bounds <-  file.path(AbidjanDir, "Region boundaries")
-District_bounds <-  file.path(AbidjanDir, "District boundaries")
-Department_bounds <-  file.path(AbidjanDir, "Department boundaries")
 
 
 reg_bounds <- st_read(file.path(Region_bounds, "Region boundaries.shp"))
@@ -30,12 +27,7 @@ st_equals(dist_bounds, dept_bounds)
 #The region, district and department boundaries above are identical.
 
 ##################################
-########### ROADS
 
-major_roads <-  file.path(AbidjanDir, "Major road")
-residential_road <-  file.path(AbidjanDir, "Residential road")
-waterbody <-  file.path(AbidjanDir, "Waterbody")
-waterway <-  file.path(AbidjanDir, "Waterway")
 
 majrds <- st_read(file.path(major_roads, "Major road.shp"))
 view(majrds)

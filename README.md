@@ -20,8 +20,7 @@ Here's a concise guide to each script included in this codebase and their respec
     - Analyzes Enhanced Vegetation Index (EVI) data to evaluate vegetation cover across different areas and its temporal changes.
   - **Monthly Rainfall Analysis:** `NASA_Rainfall.R`
     - Studies monthly rainfall patterns using NASA data to understand their effects on various settlements.
-  - **Bi-Weekly Rainfall Analysis:** `NASA_Rainfall_02.R`
-    - Provides a finer temporal resolution analysis of rainfall patterns and their potential impact on settlement dynamics.
+
 
 ### 4. Raster Analysis for Environmental Assessment
 - **Script Name:** `NASA_raster_analysis.R`

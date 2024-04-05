@@ -1,10 +1,5 @@
-source("load_path.R", echo=FALSE) 
-#source("C:/Users/hp/Abidjan/load_path.R", echo=FALSE) #leave commented#
+source("load_path.R", echo=FALSE)
 
-
-
-install.packages("reshape")
-library(reshape)
 
 
 ##############################################################################################################################################################
@@ -148,9 +143,6 @@ names(EVI_data500m) <- c("ID", column_names$column_name)
 
 ###clean NA COLUMNS
 
-print(column_names$column_name)
-#na_blank_cols <- which(colnames(EVI_data500m) == "" | is.na(colnames(EVI_data500m)))
-#EVI_data500m_clean <- EVI_data500m[, -na_blank_cols]
 
 ###  replace column names
 cleaned_colnames <- colnames(EVI_data500m)
@@ -168,7 +160,7 @@ EVI500m_data <- combined_data500m %>%
   group_by(NOM) %>%
   mutate(overall_meanEVI500m = mean(value, na.rm = T))
 
-write.csv(EVI500m_data, file.path(EVIm , "overall_EVI500m_data.csv"), row.names = FALSE)
+# write.csv(EVI500m_data, file.path(EVIm , "overall_EVI500m_data.csv"), row.names = FALSE)
 
 EVI500m_plottingdata <- inner_join(df_abidjan1, EVI500m_data )
 
@@ -290,95 +282,3 @@ ggplot(data = df_abidjan1) +
 
 
 
-
-
-
-
-
-
-
-
-# ###########################################################################################################################################
-# ######EVI for Built Areas 2023
-# #########################################################################################################################
-# BuiltupDir <-  file.path(AbidjanDir, "Built up area")
-# Built_areas <- st_read(file.path(BuiltupDir, "Built up area.shp"))
-# view(Built_areas)
-# 
-# pattern2023 <- paste0("MOD13A3.061__1_km_monthly_EVI_doy", "2023", "..._aid0001.tif")
-# rasters_2023 <- list.files(file.path(EVIkm), pattern = pattern2023, full.names = TRUE)
-# print(rasters_2023)
-# raster_data23 = lapply(seq_along(rasters_2023), 
-#                        function(x) raster::raster(rasters_2023[[x]]))
-# EVI_data_built23 = raster_data23 %>%
-#   purrr::map(~raster::extract(., Built_areas,
-#                               buffer = buffer,
-#                               fun = mean, df =TRUE)) %>%
-#   purrr::reduce(left_join, by = c("ID"))
-# view(EVI_data_built23)
-# Built_areas$meanEVI23 <- rowMeans(EVI_data_built23, na.rm=TRUE)
-# 
-# evi_plotbuilt23 <- Built_areas %>%
-#   sf::st_as_sf() %>%
-#   mutate(class = cut(meanEVI23, c(0, 0.05, 0.1, 0.16, 0.2,
-#                                   0.25, 0.3, 0.4), include.lowest = T))
-# ggplot()+
-#   geom_sf(data = df_abidjan1, aes(), color= "black", fill = "#ece9f7")+
-#   geom_sf(data = Built_areas) +
-#   geom_sf(color = "black", fill = "white") +
-#   geom_sf(data = evi_plotbuilt23, aes(geometry = geometry, fill = meanEVI23)) +
-#   geom_sf_text(data = evi_plotbuilt23, aes(geometry = geometry, label = meanEVI23,))+
-#   scale_fill_continuous(name="enhanced vegetation index", low = "#F6E0b3", high = "darkgreen") + # Uncomment if you want to label the slums  scale_fill_continuous(name="enhanced vegetation index", low = "#F6E0b3", high = "darkgreen") +
-#   labs(title = "2023 EVI (1KM) IN BUILT AREAS", fill = "", x = NULL, y = NULL) +
-#   map_theme()
-# 
-# #################
-# #####EVI INVERSE OF BUILT AREAS
-# ##########
-# 
-# builtfile <- st_read(file.path(BuiltupDir, "Built up area.shp"))
-# abidjanfile <- st_read(Abidjanmap1)
-# 
-# if (!identical(st_crs(builtfile), st_crs(abidjanfile))) {
-#   builtfile <- st_transform(builtfile, st_crs(abidjanfile))
-# }
-# st_write(abidjanfile, file.path("~/abidjan.shp"), append=FALSE)
-# citymap <- st_read(file.path("~/abidjan.shp"))
-# 
-# minus_built<- st_difference(citymap, builtfile)
-# st_write(minus_built, "~/minus_built.shp", append = FALSE)
-# non_built_areas <- st_read(file.path("~/minus_built.shp"))
-# view(non_built_areas)
-# 
-# pattern2023 <- paste0("MOD13A3.061__1_km_monthly_EVI_doy", "2023", "..._aid0001.tif")
-# rasters_2023 <- list.files(file.path(EVIkm), pattern = pattern2023, full.names = TRUE)
-# print(rasters_2023)
-# raster_data23 = lapply(seq_along(rasters_2023), 
-#                        function(x) raster::raster(rasters_2023[[x]]))
-# 
-# EVI_data_inverse_built23 = raster_data23 %>%
-#   purrr::map(~raster::extract(., non_built_areas,
-#                               buffer = buffer,
-#                               fun = mean, df =TRUE)) %>%
-#   purrr::reduce(left_join, by = c("ID"))
-# 
-# view(EVI_data_inverse_built23)
-# 
-# non_built_areas$meanEVI23 <- rowMeans(EVI_data_inverse_built23, na.rm=TRUE)
-# 
-# evi_plotinversebuilt23 <- non_built_areas %>%
-#   sf::st_as_sf() %>%
-#   mutate(class = cut(meanEVI23, c(0, 0.05, 0.1, 0.16, 0.2,
-#                                   0.25, 0.3, 0.4), include.lowest = T))
-# ggplot()+
-#   #geom_sf(data = df_abidjan1, aes(), color= "black", fill = "#ece9f7")+
-#   geom_sf(data = citymap, aes(), color= "black", fill = "#ece9f7")+
-#   geom_sf(data = non_built_areas) +
-#   geom_sf(color = "black", fill = "white") +
-#   geom_sf(data = evi_plotinversebuilt23, aes(geometry = geometry, fill = meanEVI23)) +
-#   geom_sf_text(data = evi_plotinversebuilt23, aes(geometry = geometry, label = meanEVI23))+ 
-#   scale_fill_continuous(name="enhanced vegetation index", low = "#F6E0b3", high = "darkgreen") +
-#   labs(title = "2023 EVI (1KM) IN NON BUILT AREAS", fill = "", x = NULL, y = NULL) +
-#   map_theme()
-# 
-# 
