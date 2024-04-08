@@ -36,7 +36,7 @@ Abidjanmap1 <- file.path(NASAdata, "Autonome D_Abidjan2.geojson")
 RainfallPlus <- file.path(Climatedata, "Extracted_ClimeServ_CHIRPS_")
 
 SmallsetDir <-  file.path(AbidjanDir, "Small settlement area")
-small_set <- st_read(file.path(SmallsetDir, "Small settlement area.shp"))
+small_set <- sf::st_read(file.path(SmallsetDir, "Small settlement area.shp"))
 
 
 Region_bounds <-  file.path(AbidjanDir, "Region boundaries")
@@ -57,9 +57,9 @@ waterway <-  file.path(AbidjanDir, "Waterway")
 list_of_packages <- c("RColorBrewer", "readr", "haven", "data.table", "reshape",
                       "ggplot2", "labelled", "tidyverse", "janitor", "terra",
                       "readxl", "mapsf", "survey","srvyr", "plotly", "hdf5r",
-                      "broom", "ggthemes", "ggrepel", "sjlabelled",
+                      "broom", "ggthemes", "ggrepel", "sjlabelled", "sf",
                       "ggplot2", "dplyr", "ggpubr", "sf", "viridis", "patchwork", 
-                      "raster", "wordcloud", "ggwordcloud")
+                      "raster", "wordcloud", "ggwordcloud", "terra", "plotly")
 
 
 read_install_pacakges <- function(packages = list_of_packages
@@ -78,13 +78,13 @@ routine_dat <- readRDS(file.path(program_dat, "ts_retro_civ.rds"))
 campign_dat <- read.csv(file.path(program_dat, "microplan_abidjan_brief.csv"))
 
 
-Abidjanmap <- st_read(Abidjanmap1)
+Abidjanmap <- sf::st_read(Abidjanmap1)
 
 
 Abidjan = Abi_shapefile[[3]] %>%
   filter(NAME_1 == "Abidjan")
 
-df_abidjan1 = st_intersection(Abi_shapefile[[7]], Abidjan)
+df_abidjan1 = sf::st_intersection(Abi_shapefile[[7]], Abidjan)
 
 map_theme <- function(){
   theme(axis.text.x = ggplot2::element_blank(),
