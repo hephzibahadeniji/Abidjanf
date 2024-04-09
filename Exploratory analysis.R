@@ -180,12 +180,15 @@ glimpse(routine_dat)
 table(routine_dat$health_region)
 df <- routine_dat %>%  filter(grepl("ABIDJAN", health_region))
 
+month_labels <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
 
 ggplot(df, aes(x=month, y =tpr, color =health_district))+
   geom_point()+
   geom_line()+
   scale_color_brewer(palette = "Paired")+
   facet_wrap(~year)+
+  scale_x_continuous(breaks = 1:12, labels = month_labels)+
   theme_manuscript()+
   theme(legend.position = "bottom")
   
@@ -199,6 +202,7 @@ ggplot(df2, aes(x=month, y =`mean(tpr)`, color =health_district))+
   geom_point()+
   geom_line()+
   scale_color_brewer(palette = "Paired")+
+  scale_x_continuous(breaks = 1:12, labels = month_labels)+
   theme_manuscript()+
   theme(legend.position = "bottom")
 ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_TPR_health_districts_Abidjan_all_years.pdf'),  width = 11, height =7)
@@ -214,6 +218,16 @@ ggplot(df3, aes(x=month, y =tpr, color =health_district))+
   theme(legend.position = "bottom")
 ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_TPR_health_districts_Abidjan_2022.pdf'),  width = 11, height =7)
 
+#####summary tpr
+average_tpr <- df %>%
+  group_by(health_district) %>%
+  summarise(avg_tpr = mean(tpr, na.rm = TRUE))
+
+#Abidjan_var <- read.csv(file.path(AbidjanDir, "Abidjan Data Variables.csv"))
+#joined_df <- left_join(Abidjan_var, average_tpr, by = c("HealthDistrict" = "health_district")) #, all.x = TRUE)
+#write.csv(joined_df, file.path(AbidjanDir, "Abidjan Data Variables.csv"), row.names = FALSE)
+
+
 #incidence
 check <- df %>%  dplyr::select(month, incidence_adjusted3, year, health_district) %>% filter(month == 1)
 ggplot(check, aes(x=year, y =incidence_adjusted3, color =health_district))+
@@ -223,6 +237,26 @@ ggplot(check, aes(x=year, y =incidence_adjusted3, color =health_district))+
   theme_manuscript()+
   theme(legend.position = "bottom")
 ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_incidence_adjusted_Abidjan_2022.pdf'),  width = 11, height =7)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # 
 # abidjan_malaria <- readRDS("~/Abidjan/ts_retro_civ.rds")
 # shapefilesCIV <- readRDS("~/shapefilesCIV.rds")
