@@ -1,5 +1,8 @@
+####Settlement Types/Areas
 
-source("load_path.R", echo=FALSE)
+source("load_path.R", echo=FALSE) 
+source("~/Abidjan/load_path.R", echo=FALSE)
+
 
 NASAdata <- file.path(AbidjanDir, "Autonome D_Abidjan")
 BuiltupDir <-  file.path(AbidjanDir, "Built up area")
@@ -7,45 +10,9 @@ Abi_grid <- file.path(NASAdata, "OB_Abidjan_WGS84_grid_with_building_counts",
                       "OB_Abidjan_grid_with_building_counts.shp")
 
 Built_areas <- st_read(file.path(BuiltupDir, "Built up area.shp"))
+small_set <- sf::st_read(file.path(SmallsetDir, "Small settlement area.shp"))
 slum_data <- read.csv(file.path(AbidjanDir, "Abidjan slums.csv"))
 Abi_griddata <- st_read(Abi_grid)
-
-
-Abidjan = Abi_shapefile[[3]] %>%
-  filter(NAME_1 == "Abidjan")
-
-df_abidjan1 = st_intersection(Abi_shapefile[[7]], Abidjan)
-
-
-ggplot(data = Abi_shapefile[[7]])+ #health_district - 113
-  geom_sf(color = "black", fill = 	"#ece9f7")+
-  # geom_text_repel(
-  #   data = Abi_shapefile[[7]],
-  #   aes(label =  NOM, geometry = geometry),color ='black',
-  #   stat = "sf_coordinates", min.segment.length = 0, size = 3.5, force = 1)+
-  labs(title="All 113 health districts of Cote d' Ivoire", 
-       fill = "", x = NULL, y = NULL)+
-  map_theme()
-
-
-
-#get Abidjan health district from the first file                                                                                                                                                  
-Abidjan = Abi_shapefile[[3]] %>%
-  filter(NAME_1 == "Abidjan")
-
-df_abidjan1 = st_intersection(Abi_shapefile[[7]], Abidjan)
-
-ggplot(data = Abidjan)+
-  geom_sf(data = df_abidjan1, color = "black", fill = 	"#ece9f7")+
-  geom_text_repel(
-    data = df_abidjan1,
-    aes(label = str_to_sentence(NOM), geometry = geometry),color ='black',
-    stat = "sf_coordinates", min.segment.length = 0, size = 3.5, force = 1)+
-  labs(title="All 15 health districts of Abidjan", 
-       fill = "", x = NULL, y = NULL)+
-  map_theme()
-
-
 
 
 #layer with small settlements: Small settlements are likely rural/suburban areas
@@ -73,8 +40,6 @@ ggplot()+
 
 #plot built up areas
 
-
-
 ggplot()+
   geom_sf(data = df_abidjan1)+ 
   geom_sf(color = "black", fill = "#ece9f7") +
@@ -98,9 +63,6 @@ ggplot()+
   theme(plot.caption = element_text(hjust = 0.5, margin = margin(t = 10, b = 10, unit = "pt")))+
   map_theme()
 
-# alternate, will clean
-
-
 ggplot() +
   geom_sf(data = df_abidjan1, color = "black") +
   geom_sf(data = small_set, aes(geometry = geometry, fill = "small_set"), alpha = 0.2) +
@@ -119,11 +81,8 @@ ggplot() +
 
 
 ######################################################
-# Building counts and Slums
+# BUILDING COUNTS 
 ######################################################
-
-# BUILDING COUNTS
-
 
 ggplot()+
   geom_sf(data = df_abidjan1, aes())+
@@ -156,12 +115,18 @@ slum_districts <- st_join(df_abidjan1, slum_sf, join = st_intersects)
 
 slum_counts <- slum_districts %>%
   group_by(NOM) %>%
-  summarise(Slum_Count = n())
+  summarise(Slum_Count = n()) # %>%
+  #st_drop_geometry()
 
+#Abidjan_var <- read.csv(file.path(AbidjanDir, "Abidjan Data Variables.csv"))
+#joined_df <- left_join(Abidjan_var, slum_counts, by = c("HealthDistrict" = "NOM")) #, all.x = TRUE)
+#write.csv(joined_df, file.path(AbidjanDir, "Abidjan Data Variables.csv"), row.names = FALSE)
+
+  
 ggplot() +
-  geom_sf(data = df_abidjan1, aes()) +  # Base map
-  geom_sf(data = slum_counts, aes(fill = Slum_Count), color = "black", size = 0.2) +  # Choropleth layer
-  scale_fill_gradient(name = "Slum Count", low = "lightyellow", high = "brown") +  # Color scale
+  geom_sf(data = df_abidjan1, aes()) + 
+  geom_sf(data = slum_counts, aes(fill = Slum_Count), color = "black", size = 0.2) + 
+  scale_fill_gradient(name = "Slum Count", low = "lightyellow", high = "brown") + 
   labs(title = "Slum Count by Health District") +
   map_theme()
-  
+

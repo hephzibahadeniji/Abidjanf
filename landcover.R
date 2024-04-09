@@ -95,37 +95,56 @@ translation_list <- list(
                 "9" = "Forest type changed", "10" = "No data")
 )
 
-
-
-
-
 landcover_mode <- lapply(landcover_mode, function(df) {
   for (col_name in names(df)) {
     if (col_name %in% names(translation_list)) {
-      df[[col_name]] <- ifelse(is.numeric(df[[col_name]]), 
-                               translation_list[[col_name]][as.character(df[[col_name]])],
-                               df[[col_name]])
+      for (i in seq_along(df[[col_name]])) {
+        if (!is.na(df[[col_name]][i])) {
+          translated_value <- translation_list[[col_name]][as.character(df[[col_name]][i])]
+          if (!is.na(translated_value)) {
+            df[[col_name]][i] <- translated_value
+          }
+        }
+      }
     }
   }
   return(df)
 })
 
-##### see yearly information
-landcover_2013 <- landcover_mode[[1]]
-landcover_2014 <- landcover_mode[[2]]
-landcover_2015 <- landcover_mode[[3]]
-landcover_2016 <- landcover_mode[[4]]
-landcover_2017 <- landcover_mode[[5]]
-landcover_2018 <- landcover_mode[[6]]
-landcover_2019 <- landcover_mode[[7]]
-landcover_2020 <- landcover_mode[[8]]
-landcover_2021 <- landcover_mode[[9]]
-landcover_2022 <- landcover_mode[[10]]
+
+#load landcover data
+landcover_all <- list()
+for (year in 2013:2022) {
+  landcover_data <- landcover_mode[[year - 2012]]  
+  landcover_data$Year <- year
+  landcover_all[[year - 2012]] <- landcover_data
+}
+landcover_all2 <- do.call(rbind, landcover_all)
+
+landcover_plottingdata <- inner_join(df_abidjan1, landcover_all2, by = c("NOM" = "HealthDistrict"))
+
+#####PLOTS
+#land cover type classifications
+ggplot()+
+  geom_sf(data = landcover_plottingdata, aes(geometry = geometry, fill = Quality)) + #replace fill = with classification of interest
+  facet_wrap(~Year, ncol = 3)+#
+  labs(title = "Land Cover Types in Abidjan", fill = "Quality", x = NULL, y = NULL) +
+  map_theme() 
 
 
+## proportion of confidences
 
-all.equal(landcover_2014, landcover_2015) #landcover_2016, landcover_2017, landcover_2018, landcover_2019, landcover_2020, landcover_2021, landcover_2022)
+confidence_proportions <- landcover_plottingdata %>%
+  group_by(NOM, LCCS1_Layer_confidence) %>%
+  summarise(count = n()) %>%
+  mutate(proportion = count / sum(count))
 
-
-
-
+ggplot(confidence_proportions, aes(x = NOM, y = proportion, fill = factor(LCCS1_Layer_confidence))) +
+  geom_bar(stat = "identity") +
+  labs(title = "Proportions of LCCS1 Layer Confidence in Health Districts",
+       x = "Health District",
+       y = "Proportion",
+       fill = "Confidence Level") +
+  scale_fill_discrete(name = "Confidence Level") +
+  theme_manuscript() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))

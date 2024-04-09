@@ -1,4 +1,6 @@
 source("load_path.R", echo=FALSE)
+source("~/Abidjan/load_path.R", echo=FALSE)
+
 
 ##############################################################################################################################################################
 # visualize shapefiles  
@@ -203,12 +205,12 @@ ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(),
 # routine data for Abidjan 
 ###############################################################################################################################################################
 #tpr 
-
-
 head(routine_dat)
 glimpse(routine_dat)
 table(routine_dat$health_region)
 df <- routine_dat %>%  filter(grepl("ABIDJAN", health_region))
+
+month_labels <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 
 
 ggplot(df, aes(x=month, y =tpr, color =health_district))+
@@ -216,6 +218,7 @@ ggplot(df, aes(x=month, y =tpr, color =health_district))+
   geom_line()+
   scale_color_brewer(palette = "Paired")+
   facet_wrap(~year)+
+  scale_x_continuous(breaks = 1:12, labels = month_labels)+
   theme_manuscript()+
   theme(legend.position = "bottom")
   
@@ -230,6 +233,7 @@ ggplot(df2, aes(x=month, y =`mean(tpr)`, color =health_district))+
   geom_point()+
   geom_line()+
   scale_color_brewer(palette = "Paired")+
+  scale_x_continuous(breaks = 1:12, labels = month_labels)+
   theme_manuscript()+
   theme(legend.position = "bottom")
 
@@ -248,6 +252,17 @@ ggplot(df3, aes(x=month, y =tpr, color =health_district))+
   theme(legend.position = "bottom")
 ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), 
               '_TPR_health_districts_Abidjan_2022.pdf'),  width = 11, height =7)
+
+#####summary tpr
+
+average_tpr <- df %>%
+  group_by(health_district) %>%
+  summarise(avg_tpr = mean(tpr, na.rm = TRUE))
+
+#Abidjan_var <- read.csv(file.path(AbidjanDir, "Abidjan Data Variables.csv"))
+#joined_df <- left_join(Abidjan_var, average_tpr, by = c("HealthDistrict" = "health_district")) #, all.x = TRUE)
+#write.csv(joined_df, file.path(AbidjanDir, "Abidjan Data Variables.csv"), row.names = FALSE)
+  
 
 #incidence
 check <- df %>%  
@@ -475,3 +490,4 @@ ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(),
 # 
 # 
 # 
+>>>>>>> 14422279b678863959e30cd7b94dbd8817fd8362:exploratory_analysis.R
