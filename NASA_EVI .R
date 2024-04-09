@@ -1,6 +1,4 @@
 source("load_path.R", echo=FALSE) 
-#source("C:/Users/hp/Abidjan/load_path.R", echo=FALSE) #leave commented#
-
 
 NASAdata <- file.path(AbidjanDir, "Autonome D_Abidjan")
 Earthdata <- file.path(NASAdata, "EarthData")
@@ -163,13 +161,13 @@ column_names <- expand.grid(mon = month.abb, yr = 2013:2023) %>%
 names(EVI_data500m) <- c("ID", column_names$column_name)
 
 
-###clean NA COLUMNS
+#clean NA columns
 
 print(column_names$column_name)
 #na_blank_cols <- which(colnames(EVI_data500m) == "" | is.na(colnames(EVI_data500m)))
 #EVI_data500m_clean <- EVI_data500m[, -na_blank_cols]
 
-###  replace column names
+#replace column names
 cleaned_colnames <- colnames(EVI_data500m)
 cleaned_colnames[is.na(cleaned_colnames) | cleaned_colnames == ""] <- "valid_name"
 colnames(EVI_data500m) <- cleaned_colnames
@@ -189,7 +187,7 @@ write.csv(EVI500m_data, file.path(EVIm , "overall_EVI500m_data.csv"), row.names 
 
 EVI500m_plottingdata <- inner_join(df_abidjan1, EVI500m_data )
 
-################ EVI 500M Plots
+#plots
 
 ggplot(data = df_abidjan1) +
   geom_sf(color = "black", fill = "white") +
@@ -274,7 +272,7 @@ write.csv(NDVI_data, file.path(NDVIkm , "overall_NDVI_data.csv"), row.names = FA
 
 NDVI_plottingdata <- inner_join(df_abidjan1, NDVI_data )
 
-####### NDVI (1KM) Plots
+#plots
 
 ggplot(data = df_abidjan1) +
   geom_sf(color = "black", fill = "white") +
