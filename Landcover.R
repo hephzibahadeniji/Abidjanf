@@ -1,16 +1,9 @@
 ############LANDCOVER
 
-source("load_path.R", echo=FALSE)
-source("~/Abidjanf/load_path.R", echo=FALSE)
-
-#install.packages("rgdal")
-#library(rgdal)
-install.packages("hdf5r") 
-library(hdf5r) 
-library(terra)
+source("load_path.R", echo=FALSE) 
+source("~/Abidjan/load_path.R", echo=FALSE)
 
 LandcoverDir <- file.path(Earthdata, "MODIS-TERRA_LandCoverType_Yearly_Global_500m_2013-2023")
-
 
 landcover_files  = list.files( file.path(LandcoverDir), 
                                pattern = ".hdf", full.names = TRUE)
@@ -75,6 +68,7 @@ landcover_mode <- lapply(landcover_mode, function(df) {
   return(df)
 })
 
+
 #load landcover data
 landcover_all <- list()
 for (year in 2013:2022) {
@@ -86,7 +80,7 @@ landcover_all2 <- do.call(rbind, landcover_all)
 
 landcover_plottingdata <- inner_join(df_abidjan1, landcover_all2, by = c("NOM" = "HealthDistrict"))
 
-#####PLOTS
+#PLOTS
 #land cover type classifications
 ggplot()+
   geom_sf(data = landcover_plottingdata, aes(geometry = geometry, fill = Quality)) + #replace fill = with classification of interest
@@ -96,7 +90,6 @@ ggplot()+
 
 
 ## proportion of confidences
-
 confidence_proportions <- landcover_plottingdata %>%
   group_by(NOM, LCCS1_Layer_confidence) %>%
   summarise(count = n()) %>%
@@ -111,5 +104,3 @@ ggplot(confidence_proportions, aes(x = NOM, y = proportion, fill = factor(LCCS1_
   scale_fill_discrete(name = "Confidence Level") +
   theme_manuscript() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-
