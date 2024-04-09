@@ -1,4 +1,6 @@
+source("load_path.R", echo=FALSE)
 source("~/Abidjan/load_path.R", echo=FALSE)
+
 
 ##############################################################################################################################################################
 # visualize shapefiles  
@@ -17,7 +19,11 @@ ggplot(data = Abi_shapefile[[2]])+  #Admin 1 - 14
        Abidjan and Yamoussoukro are autonomous", 
        fill = "", x = NULL, y = NULL)+
   map_theme()
-ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_districts_CoteDIvoire.pdf'),  width = 8, height =5)
+
+ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), 
+              '_districts_CoteDIvoire.pdf'), 
+       width = 8, height =5)
+
 
 ggplot(data = Abi_shapefile[[3]])+ #Admin 2 - 33 
   geom_sf(color = "black", fill = "#7edfc4")+
@@ -29,7 +35,8 @@ ggplot(data = Abi_shapefile[[3]])+ #Admin 2 - 33
        Abidjan and Yamoussoukro are autonomous", 
        fill = "", x = NULL, y = NULL)+
   map_theme()
-ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_regions_CoteDIvoire.pdf'),  width = 8, height =5)
+ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), 
+              '_regions_CoteDIvoire.pdf'),  width = 8, height =5)
 
 
 ggplot(data = Abi_shapefile[[4]])+ #Admin 3 - 113 
@@ -38,7 +45,8 @@ ggplot(data = Abi_shapefile[[4]])+ #Admin 3 - 113
        Abidjan and Yamoussoukro do not have departments", 
        fill = "", x = NULL, y = NULL)+
   map_theme()
-ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_departments_CoteDIvoire.pdf'),  width = 8, height =5)
+ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), 
+              '_departments_CoteDIvoire.pdf'),  width = 8, height =5)
 
 
 ggplot(data = Abi_shapefile[[5]])+ #Admin 4 - 191
@@ -47,7 +55,8 @@ ggplot(data = Abi_shapefile[[5]])+ #Admin 4 - 191
        Abidjan and Yamoussoukro do not have sub-prefectures", 
        fill = "", x = NULL, y = NULL)+
   map_theme()
-ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_subprectures_CoteDIvoire.pdf'),  width = 8, height =5)
+ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), 
+              '_subprectures_CoteDIvoire.pdf'),  width = 8, height =5)
 
 
 ggplot(data = Abi_shapefile[[6]])+ #facies - 11
@@ -59,7 +68,8 @@ ggplot(data = Abi_shapefile[[6]])+ #facies - 11
   labs(title="All 11 facies of Cote d' Ivoire", 
        fill = "", x = NULL, y = NULL)+
   map_theme()
-ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_facies_CoteDIvoire.pdf'),  width = 8, height =5)
+ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), 
+              '_facies_CoteDIvoire.pdf'),  width = 8, height =5)
 
 
 
@@ -72,7 +82,8 @@ ggplot(data = Abi_shapefile[[7]])+ #health_district - 113
   labs(title="All 113 health districts of Cote d' Ivoire", 
        fill = "", x = NULL, y = NULL)+
   map_theme()
-ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_health_district113_CoteDIvoire.pdf'),  width = 8, height =5)
+ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), 
+              '_health_district113_CoteDIvoire.pdf'),  width = 8, height =5)
 
 ggplot(data = Abi_shapefile[[8]])+ #health district coarse - 109
   geom_sf(color = "black", fill = 	"#ece9f7")+
@@ -83,7 +94,10 @@ ggplot(data = Abi_shapefile[[8]])+ #health district coarse - 109
   labs(title="All 109 health district coarse of Cote d' Ivoire", 
        fill = "", x = NULL, y = NULL)+
   map_theme()
-ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_health_district109_CoteDIvoire.pdf'),  width = 8, height =5)
+
+
+ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), 
+              '_health_district109_CoteDIvoire.pdf'),  width = 8, height =5)
 
 ggplot(data = Abi_shapefile[[9]])+ #health regions - 33
   geom_sf(color = "black", fill = 	"#ffd6c2")+
@@ -94,7 +108,10 @@ ggplot(data = Abi_shapefile[[9]])+ #health regions - 33
   labs(title="All 33 health regions of Cote d' Ivoire", 
        fill = "", x = NULL, y = NULL)+
   map_theme()
-ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_health_regions33_CoteDIvoire.pdf'),  width = 8, height =5)
+
+
+ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), 
+              '_health_regions33_CoteDIvoire.pdf'),  width = 8, height =5)
 
 
 ##############################################################################################################################################################
@@ -113,7 +130,10 @@ ggplot(data = Abidjan)+
   labs(title="All 15 health districts of Abidjan", 
        fill = "", x = NULL, y = NULL)+
   map_theme()
-ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_health_districts15_Abidjan.pdf'),  width = 8, height =5)
+
+
+ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), 
+              '_health_districts15_Abidjan.pdf'),  width = 8, height =5)
 
 #get Abidjan health district from the second file 
 df_abidjan2 = st_intersection(Abi_shapefile[[8]], Abidjan)
@@ -126,13 +146,17 @@ ggplot(data = Abidjan)+
   labs(title="All 13 health districts of Abidjan", 
        fill = "", x = NULL, y = NULL)+
   map_theme()
-ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_health_districts13_Abidjan.pdf'),  width = 8, height =5)
+
+ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(),
+              '_health_districts13_Abidjan.pdf'),  width = 8, height =5)
 
 
 ##############################################################################################################################################################
 # generate map of Abidjan sub-prefecture 
 ###############################################################################################################################################################
+
 df_abidjan = st_intersection(Abi_shapefile[[5]], Abidjan)
+
 ggplot(data = Abidjan)+
   geom_sf(data = df_abidjan, color = "black", fill = 	"#ece9f7")+
   geom_text_repel(
@@ -142,16 +166,19 @@ ggplot(data = Abidjan)+
   labs(title="All 4 sub-prefectures of Abidjan", 
        fill = "", x = NULL, y = NULL)+
   map_theme()
-ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_sub_prefectures_Abidjan.pdf'),  width = 6, height =4)
+
+ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(),
+              '_sub_prefectures_Abidjan.pdf'),  width = 6, height =4)
 
 
 ##############################################################################################################################################################
 # nets distribution 
 ####################################################################################################################################################
+
 net_df <- left_join(df_abidjan1, campign_dat, by = c("NOM" = "district_name")) %>%  filter(!is.na(LLINs_distributed)) %>% 
   mutate(name_excess = paste0(str_to_sentence(NOM),", ", excess_LLINs_prop_available ))
 
-p<- ggplot(net_df, aes(x=fct_reorder(str_to_sentence(NOM), LLINs_distributed), y=LLINs_distributed/1000, fill= Type_insecticide)) + 
+p <- ggplot(net_df, aes(x=fct_reorder(str_to_sentence(NOM), LLINs_distributed), y=LLINs_distributed/1000, fill= Type_insecticide)) + 
   geom_bar(stat = "identity") +
   coord_flip() +
   theme_manuscript()+
@@ -159,7 +186,7 @@ p<- ggplot(net_df, aes(x=fct_reorder(str_to_sentence(NOM), LLINs_distributed), y
   theme(legend.title = element_blank())+
   labs(x ="", y = "Number of bets nets distributed in Abidjan in 2021 campaign (in thousands)")
 
-p1<-ggplot(net_df, aes(fill= excess_LLINs_prop_available)) +
+p1 <- ggplot(net_df, aes(fill= excess_LLINs_prop_available)) +
   geom_sf()+
   scale_fill_gradient(low ="#ffecc6" , high = "#f73b3b") +
   geom_text_repel(
@@ -170,7 +197,10 @@ p1<-ggplot(net_df, aes(fill= excess_LLINs_prop_available)) +
   map_theme()
 
 p/p1 + plot_annotation(tag_levels = 'A')
-ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_nets_distributed_Left_over_2021_Abdijan.pdf'),  width = 8, height =7)
+
+ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), 
+              '_nets_distributed_Left_over_2021_Abdijan.pdf'),  width = 8, height =7)
+
 ##############################################################################################################################################################
 # routine data for Abidjan 
 ###############################################################################################################################################################
@@ -192,7 +222,8 @@ ggplot(df, aes(x=month, y =tpr, color =health_district))+
   theme_manuscript()+
   theme(legend.position = "bottom")
   
-ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_TPR_health_districts_Abidjan.pdf'),  width = 11, height =7)
+ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), 
+              '_TPR_health_districts_Abidjan.pdf'),  width = 11, height =7)
 
 
 df2 <- df %>%  group_by(month, health_district) %>% 
@@ -205,10 +236,13 @@ ggplot(df2, aes(x=month, y =`mean(tpr)`, color =health_district))+
   scale_x_continuous(breaks = 1:12, labels = month_labels)+
   theme_manuscript()+
   theme(legend.position = "bottom")
-ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_TPR_health_districts_Abidjan_all_years.pdf'),  width = 11, height =7)
+
+ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), 
+              '_TPR_health_districts_Abidjan_all_years.pdf'),  width = 11, height =7)
 
 
-df3 <- df %>%  filter(year == '2022')
+df3 <- df %>%  
+  filter(year == '2022')
 
 ggplot(df3, aes(x=month, y =tpr, color =health_district))+
   geom_point()+
@@ -216,9 +250,11 @@ ggplot(df3, aes(x=month, y =tpr, color =health_district))+
   scale_color_brewer(palette = "Paired")+
   theme_manuscript()+
   theme(legend.position = "bottom")
-ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_TPR_health_districts_Abidjan_2022.pdf'),  width = 11, height =7)
+ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), 
+              '_TPR_health_districts_Abidjan_2022.pdf'),  width = 11, height =7)
 
 #####summary tpr
+
 average_tpr <- df %>%
   group_by(health_district) %>%
   summarise(avg_tpr = mean(tpr, na.rm = TRUE))
@@ -226,37 +262,22 @@ average_tpr <- df %>%
 #Abidjan_var <- read.csv(file.path(AbidjanDir, "Abidjan Data Variables.csv"))
 #joined_df <- left_join(Abidjan_var, average_tpr, by = c("HealthDistrict" = "health_district")) #, all.x = TRUE)
 #write.csv(joined_df, file.path(AbidjanDir, "Abidjan Data Variables.csv"), row.names = FALSE)
-
+  
 
 #incidence
-check <- df %>%  dplyr::select(month, incidence_adjusted3, year, health_district) %>% filter(month == 1)
+check <- df %>%  
+  dplyr::select(month, incidence_adjusted3, year, health_district) %>% 
+  filter(month == 1)
+
 ggplot(check, aes(x=year, y =incidence_adjusted3, color =health_district))+
   geom_point()+
   geom_line()+
   scale_color_brewer(palette = "Paired")+
   theme_manuscript()+
   theme(legend.position = "bottom")
-ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_incidence_adjusted_Abidjan_2022.pdf'),  width = 11, height =7)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), 
+              '_incidence_adjusted_Abidjan_2022.pdf'),  width = 11, height =7)
 # 
 # abidjan_malaria <- readRDS("~/Abidjan/ts_retro_civ.rds")
 # shapefilesCIV <- readRDS("~/shapefilesCIV.rds")
@@ -469,3 +490,4 @@ ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), '_incidence_adjusted_A
 # 
 # 
 # 
+>>>>>>> 14422279b678863959e30cd7b94dbd8817fd8362:exploratory_analysis.R
