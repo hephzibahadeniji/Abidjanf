@@ -178,7 +178,7 @@ ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(),
 net_df <- left_join(df_abidjan1, campign_dat, by = c("NOM" = "district_name")) %>%  filter(!is.na(LLINs_distributed)) %>% 
   mutate(name_excess = paste0(str_to_sentence(NOM),", ", excess_LLINs_prop_available ))
 
-p <- ggplot(net_df, aes(x=fct_reorder(str_to_sentence(NOM), LLINs_distributed), y=LLINs_distributed/1000, fill= Type_insecticide)) + 
+p <- ggplot(net_df, aes(x=fct_reorder(str_to_sentence(NOM), LLINs_distributed), y=LLINs_distributed, fill= Type_insecticide)) + 
   geom_bar(stat = "identity") +
   coord_flip() +
   theme_manuscript()+
@@ -489,5 +489,4 @@ ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(),
 #   ggtitle("Map of Abidjan Health Districts and TPR")
 # 
 # 
-# 
->>>>>>> 14422279b678863959e30cd7b94dbd8817fd8362:exploratory_analysis.R
+

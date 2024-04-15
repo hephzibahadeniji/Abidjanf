@@ -57,16 +57,22 @@ long_rainfall_data <- df_abidjan1 %>%
 
 summerised_rainfall <- long_rainfall_data %>% 
   group_by(NOM, ID, year, month) %>% 
-  mutate(monthly_rainfall = mean(value, na.rm = T)) %>% 
-  ungroup() %>% 
-  group_by(NOM, ID, year) %>% 
-  mutate(yearly_rainfall = mean(value, na.rm = T)) %>% 
-  rename(daily_rainfall = value) %>% 
-  ungroup() %>% 
-  group_by(NOM, ID) %>% 
-  mutate(overall_rainfall = mean(daily_rainfall, na.rm = T)) 
+  summarise(monthly_rainfall = sum(value, na.rm = T)) %>% 
+  ungroup() #%>% 
+  # group_by(NOM, ID, year) %>% 
+  # mutate(yearly_rainfall = sum(value, na.rm = T)) %>% 
+  # rename(daily_rainfall = value) %>% 
+  # ungroup() %>% 
+  # group_by(NOM, ID) %>% 
+  # mutate(overall_rainfall = mean(daily_rainfall, na.rm = T)) 
+write.csv(summerised_rainfall,file.path(RainfallPlus, "monthly_rainfall_sums_2013_2023.csv"))
 
+summerised_rainfall_year <- long_rainfall_data %>% 
+  group_by(NOM, ID, month) %>% 
+  summarise(monthly_rainfall = sum(value, na.rm = T)) %>% 
+  ungroup()
 
+write.csv(summerised_rainfall,file.path(RainfallPlus, "monthly_rainfall_sums_all_years.csv"))
 
 rainfall_plottingdata <- inner_join(df_abidjan1, summerised_rainfall)
 
@@ -74,30 +80,60 @@ rainfall_plottingdata <- inner_join(df_abidjan1, summerised_rainfall)
 ####### Plots
 ##########################################################################################
 
-
-ggplot(data = df_abidjan1) +
-  geom_sf(color = "black", fill = "white") +
-  geom_sf(data = rainfall_plottingdata, aes(geometry = geometry, fill = overall_rainfall )) +
-  facet_wrap(~year)+
-  scale_fill_continuous(name = "Average Rainfall", low = "grey", high = "darkblue") +
-  labs(title = "Average Rainfall", fill = "", x = NULL, y = NULL) +
-  map_theme() 
-
-
-ggplot(data = df_abidjan1) +
-  geom_sf(color = "black", fill = "white") +
-  geom_sf(data = rainfall_plottingdata, aes(geometry = geometry, fill = overall_rainfall)) +
-  scale_fill_continuous(name = "Average Rainfall", low = "grey", high = "darkblue") +
-  labs(title = "Average Rainfall", fill = "", x = NULL, y = NULL) +
-  map_theme() 
+# 
+# ggplot(data = df_abidjan1) +
+#   geom_sf(color = "black", fill = "white") +
+#   geom_sf(data = rainfall_plottingdata, aes(geometry = geometry, fill = monthly_rainfall )) +
+#   facet_wrap(~year)+
+#   scale_fill_continuous(name = "Average Rainfall", low = "grey", high = "darkblue") +
+#   labs(title = "Average Rainfall", fill = "", x = NULL, y = NULL) +
+#   map_theme() 
+# 
+# 
+# ggplot(data = df_abidjan1) +
+#   geom_sf(color = "black", fill = "white") +
+#   geom_sf(data = rainfall_plottingdata, aes(geometry = geometry, fill = overall_rainfall)) +
+#   scale_fill_continuous(name = "Average Rainfall", low = "grey", high = "darkblue") +
+#   labs(title = "Average Rainfall", fill = "", x = NULL, y = NULL) +
+#   map_theme() 
 
 
 ################################################################################
 ########### TIME SERIES PLOTS##########################################
 ##########################################################################
 
-summerised_rainfall <-read.csv(file.path(RainfallPlus, "all_rainfall_data.csv"))
+#summerised_rainfall <-read.csv(file.path(RainfallPlus, "all_rainfall_data.csv")) 
 
+
+overall_month <- summerised_rainfall %>%  
+  group_by(month) %>% summarise(avg_month = sum(monthly_rainfall, na.rm=T)) %>%  ungroup()
+
+
+ggplot(overall_month, aes(x=month, y =avg_month, group=1)) +
+  geom_line()
+
+year_13 <- summerised_rainfall %>%  filter(year == "2013") %>%  
+  group_by(month) %>% summarise(all_month_rain = sum(monthly_rainfall, na.rm=T))
+
+year_21 <- summerised_rainfall %>%  filter(year == "2021") %>%  
+  group_by(month) %>% summarise(all_month_rain = sum(monthly_rainfall, na.rm=T))
+
+p1 <- ggplot(year_13, aes(x=month, y =all_month_rain, group=1)) +
+  geom_line(color ="#ff0085", linewidth= 1) +
+  theme_manuscript()+
+  labs(y= "Total rainfall in millmeters in Abidjan in 2013", x = "month")+
+  ylim(0, 3700)
+
+p2 <-ggplot(year_21, aes(x=month, y =all_month_rain, group=1)) +
+  geom_line(color ="#ff0085", linewidth= 1) +
+  theme_manuscript()+
+  labs(y= "Total rainfall in millmeters in Abidjan in 2021", x = "month")+
+  ylim(0, 3700)
+
+p1 + p2
+
+ggsave(file.path(plots, "Rainfall", "240412_ifeoma_edits", "rainfall_2013_2012.pdf"),
+       width = 12, height = 5, dpi = 300)
 
 ##########################################################################
 # plot time series with yearly rainfall

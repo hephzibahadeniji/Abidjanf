@@ -1,5 +1,5 @@
 
-rm(list=ls())
+#rm(list=ls())
 
 #directories
 user <- Sys.getenv("USERNAME")
