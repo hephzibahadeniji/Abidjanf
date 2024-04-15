@@ -1,5 +1,5 @@
 
-rm(list=ls())
+#rm(list=ls())
 
 #directories
 user <- Sys.getenv("USERNAME")
@@ -24,6 +24,7 @@ if (user == "MGGVUS002" | user == ""){
 
 # other paths 
 
+DHS_data <- file.path(AbidjanDir, 'DHS')
 NASAdata <- file.path(AbidjanDir, "Autonome D_Abidjan")
 Earthdata <- file.path(NASAdata, "EarthData")
 EVIkm <- file.path(Earthdata, "MODIS-TERRA_VegetationIndex_EVI_1km_Monthly_2013-23")
