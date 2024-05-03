@@ -10,7 +10,7 @@ Here's a concise guide to each script included in this codebase and their respec
 - **Script Name:** `00-exploratory_analysis.R`
 -  **Purpose:** Views administrative boundaries of Abidjan and analyses general malaria-related metrics in Abidjan e.g. test positivity rate.
 
-## 2. NASA Environmental Variables Analysis
+### 2. NASA Environmental Variables Analysis
 - **Script Name:** `01-NASA_EVI.R`
   - **Purpose:** Analyzes Enhanced Vegetation Index (EVI) and Normalized Difference Vegetation Index (NDVI) data to evaluate vegetation cover across different areas and its temporal changes.
 
@@ -39,7 +39,8 @@ Here's a concise guide to each script included in this codebase and their respec
 - **Purpose:** Normalizes values retrieved from previous analyses to model malaria risks then score and rank health districts.
 
 ### 9. Housing Structure
-Contains scripts that explore possible layout and housing structure in the Abidjan
+Contains scripts that explore possible layout and housing structure in the Abidjan.
+
 a)**Script Name:** `00-real_estate.R`
 - **Purpose:**  Investigates trends in the real estate market, including property prices, types, and their distribution across Abidjan. The script aims to correlate these trends with the types of settlements identified.
   
@@ -48,6 +49,7 @@ b)- **Script Name:** `01-settlements_types_areas.R`
 
 ### 10. Rainfall
 Contains scripts that explore precipitation in Abidjan
+
 a) **Script Name:** `01-NASA_Rainfall.R`
 - **Purpose:** Classifies and quantifies different types of settlements in Abidjan using satellite imagery and geospatial data analysis techniques.
   
