@@ -16,6 +16,7 @@ __pycache__/
 archive
 data-in/*
 data-out/*
+.DS_Store
 
 # Distribution / packaging
 .Python
