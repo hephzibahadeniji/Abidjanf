@@ -1,4 +1,5 @@
-source("load_path.R", echo=FALSE) 
+rm(list=ls())
+
 source("~/Abidjan/load_path.R", echo=FALSE)
 
 RainfallPlus <- file.path(Climatedata, "Extracted_ClimeServ_CHIRPS_")
@@ -103,6 +104,18 @@ ggplot(data = df_abidjan1) +
   labs(title = "Average Rainfall", fill = "", x = NULL, y = NULL) +
   map_theme() 
 
+ggplot()+
+  geom_sf(data = rainfall_plottingdata, aes(geometry =geometry, fill =overall_rainfall))+
+  #geom_text_repel(data =rainfall_plottingdata, 
+   #               aes(label=str_to_sentence(NOM), geometry=geometry), color ='black',
+    #              stat = "sf_coordinates", min.segment.length = 0, size = 3.5, force = 1)+
+  scale_fill_continuous(name = "Rain", low = "lightyellow", high = "darkblue")+
+  labs(title = "Average Rainfall (2013-2023)",
+       fill = "rainfall(inches)", x = "", y= "")+
+  map_theme()
+
+
+
 
 ################################################################################
 ########### TIME SERIES PLOTS##########################################
@@ -200,67 +213,6 @@ plot_ly(rainfall_data, x = ~date, y = ~daily_rainfall, color = ~NOM, text = ~pas
          hovermode = "closest")
 
 
-###############################################################################################
-####### WATER FREQUENCY/ FLOOD RISK ####################
-###############################################################################
-
-WaterFreqDir <- file.path(NASAdata, "Abidjan Water Frequency")
-WaterFreq_Q1 <- file.path(WaterFreqDir, "Abidjan_WF_Q1")
-WaterFreq_Q2 <- file.path(WaterFreqDir, "Abidjan_WF_Q2")
-WaterFreq_Q3 <- file.path(WaterFreqDir, "Abidjan_WF_Q3")
-WaterFreq_Q4 <- file.path(WaterFreqDir, "Abidjan_WF_Q4")
-
-
-##mean WF constant  Q1 2013-2023
-Q1_waterfreq <- list.files(file.path(WaterFreq_Q1), 
-                       pattern = ".tif", full.names = TRUE)
-
-Q1_waterfreq_data <- lapply(seq_along(Q1_waterfreq), 
-                       function(x) raster::raster(Q1_waterfreq[[x]]))
-
-plot_Q1 <- Q1_waterfreq_data %>%
- purrr::map(~raster::extract(., df_abidjan1,
-                             fun = mean, df =TRUE))%>%
- purrr::reduce(left_join, by = c("ID"))
-
-
-#mean WF constant Q2 2013-2022
-Q2_waterfreq <- list.files(file.path(WaterFreq_Q2), 
-                           pattern = ".tif", full.names = TRUE)
-
-Q2_waterfreq_data <- lapply(seq_along(Q2_waterfreq), 
-                            function(x) raster::raster(Q2_waterfreq[[x]]))
-
-plot_Q2 <- Q2_waterfreq_data %>%
-  purrr::map(~raster::extract(., df_abidjan1,
-                              fun = mean, df =TRUE))%>%
-  purrr::reduce(left_join, by = c("ID"))
-
-
-# Q3 2013-2022
-Q3_waterfreq <- list.files(file.path(WaterFreq_Q3), 
-                           pattern = ".tif", full.names = TRUE)
-
-Q3_waterfreq_data <- lapply(seq_along(Q3_waterfreq), 
-                            function(x) raster::raster(Q3_waterfreq[[x]]))
-
-plot_Q3 <- Q3_waterfreq_data %>%
-  purrr::map(~raster::extract(., df_abidjan1,
-                              fun = mean, df =TRUE))%>%
-  purrr::reduce(left_join, by = c("ID"))
-
-#Q4 2013-2022
-
-Q4_waterfreq <- list.files(file.path(WaterFreq_Q4), 
-                           pattern = ".tif", full.names = TRUE)
-
-Q4_waterfreq_data <- lapply(seq_along(Q4_waterfreq), 
-                            function(x) raster::raster(Q4_waterfreq[[x]]))
-
-plot_Q4 <- Q4_waterfreq_data %>%
-  purrr::map(~raster::extract(., df_abidjan1,
-                              fun = mean, df =TRUE))%>%
-  purrr::reduce(left_join, by = c("ID"))
 
 
 

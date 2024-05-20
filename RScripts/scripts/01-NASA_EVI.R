@@ -1,5 +1,5 @@
-
-source("load_path.R", echo=FALSE) 
+rm(list=ls())
+source("~/Abidjan/load_path.R", echo=FALSE)
 
 
 ##############################################################################################################################################################
@@ -43,7 +43,9 @@ combined_data <- df_abidjan1 %>%
 
 
 #write.csv(combined_data, file.path("Abidjan Data Variables.csv"), row.names = FALSE)
-
+# Variables_summary <- read.csv(file.path(AbidjanDir, "Abidjan Data Variables.csv"))
+# Variables_summary$meanEVI <- combined_data$meanEVI
+# write.csv(Variables_summary, file.path(AbidjanDir, "Abidjan Data Variables.csv"), row.names = FALSE)
 
 ##########################################################################################
 ####### Analysis
@@ -71,11 +73,12 @@ EVI_data <- combined_data %>%
 
 EVI_plottingdata <- inner_join(df_abidjan1, EVI_data )
 
+EVI_plottingdata2 <- inner_join(df_abidjan1, combined_data)
+
 ##########################################################################################
 ####### Plots
 ##########################################################################################
-
-
+#EVI in each year 2013-2023
 ggplot(data = df_abidjan1) +
   geom_sf(color = "black", fill = "white") +
   geom_sf(data = EVI_plottingdata, aes(geometry = geometry, fill = yearly_meanEVI )) +
@@ -84,14 +87,23 @@ ggplot(data = df_abidjan1) +
   labs(title = "EVI (1KM)", fill = "", x = NULL, y = NULL) +
   map_theme() 
 
-
-
+#MeanEVI 2013-2023
 ggplot(data = df_abidjan1) +
   geom_sf(color = "black", fill = "white") +
   geom_sf(data = EVI_plottingdata, aes(geometry = geometry, 
                                        fill = overall_meanEVI )) +
   scale_fill_continuous(name="enhanced vegetation index", low = "#F6E0b3", high = "darkgreen") +
   labs(title = "enhanced vegetation index (1KM)", fill = "", x = NULL, y = NULL) +
+  map_theme()
+
+ggplot()+
+  geom_sf(data = EVI_plottingdata2, aes(geometry =geometry, fill =meanEVI))+
+  geom_text_repel(data =EVI_plottingdata2, 
+                  aes(label=str_to_sentence(NOM), geometry=geometry), color ='black',
+               stat = "sf_coordinates", min.segment.length = 0, size = 3.5, force = 1)+
+  scale_fill_continuous(name = "EVI", low = "#F6E0b3", high = "darkgreen")+
+  labs(title = "Mean Enhanced Vegetation Index (2013-2023)",
+       fill = "EVI", x = "", y= "")+
   map_theme()
 
 ##############################################
@@ -131,7 +143,7 @@ combined_data500m <- df_abidjan1 %>%
   dplyr::select(NOM, meanEVI500m)
 
 #Variables_summary <- read.csv(file.path(AbidjanDir, "Abidjan Data Variables.csv"))
-#Variables_summary$meanEVI500m <- combined_data500m$meanEVI500m
+#Variables_summary$meanEVI_500m <- combined_data500m$meanEVI500m
 #write.csv(Variables_summary, file.path(AbidjanDir, "Abidjan Data Variables.csv"), row.names = FALSE)
 #write.csv(combined_data500m, file.path(AbidjanDir, "Abidjan Data Variables.csv"), row.names = FALSE)
 
@@ -222,6 +234,7 @@ ggplot(data = df_abidjan1) +
 combined_data2 <- df_abidjan1 %>% 
   st_drop_geometry() %>% 
   dplyr::select(NOM, meanNDVI)
+
 
 #Variables_summary <- read.csv(file.path(AbidjanDir, "Abidjan Data Variables.csv"))
 #Variables_summary$mean_NDVI1km <- combined_data2$meanNDVI
