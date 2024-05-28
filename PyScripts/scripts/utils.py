@@ -6,6 +6,7 @@ sys.path.insert(0, "../scripts")
 
 import numpy as np
 import rasterio as rio
+from skimage import exposure
 import matplotlib.pyplot as plt
 import spectral_indix_tools as spt
 
@@ -69,6 +70,7 @@ def write_raster(raster, crs, transform, output_file):
 
     with rio.open(output_file, "w", **profile) as out:
         out.write_band(1, raster)
+        
 
 def arr_normalizer(array):
     """
@@ -77,6 +79,73 @@ def arr_normalizer(array):
     array_min, array_max = array.min(), array.max()
     
     return ((array - array_min)/(array_max - array_min))
+
+#### Sentinel 2 image processing level 1
+def get_s2_processed_l1(filename):
+    # # open image with rio
+    raster = rio.open(filename)
+
+    # Read the data
+    data = raster.read()
+
+    ### Change the axis from (band, x, y) to (x, y, band)
+    data = np.transpose(data, (1, 2, 0))
+
+    ## Preprocessing
+    data_enhanced = np.zeros(data.shape)
+    for i in range(data.shape[-1]):
+        p2, p98 = np.percentile(data[:, :, i], (2, 98))
+        data_enhanced[:, :, i] = exposure.rescale_intensity(data[:, :, i], in_range=(p2, p98))
+
+    return raster, arr_normalizer(data), arr_normalizer(data_enhanced)
+
+def enhance_s2_rgb(raster):
+    # Read the data
+    data = raster.read()
+
+    ### Change the axis from (band, x, y) to (x, y, band)
+    data = np.transpose(data, (1, 2, 0))
+
+    ## Preprocessing
+    data_enhanced = np.zeros(data.shape)
+    for i in range(data.shape[-1]):
+        p2, p98 = np.percentile(data[:, :, i], (2, 98))
+        data_enhanced[:, :, i] = exposure.rescale_intensity(data[:, :, i], in_range=(p2, p98))
+
+    return arr_normalizer(data), arr_normalizer(data_enhanced)
+
+def geo_enhance_s2_rgb(geo_data):
+    ## Preprocessing
+    geo_enhanced = np.zeros(geo_data.shape)
+    for i in range(geo_data.shape[-1]):
+        for j in range(geo_data.shape[0]):
+            p1, p99 = np.percentile(geo_data[j, :, :, i], (1, 99))
+            geo_enhanced[j, :, :, i] = exposure.rescale_intensity(geo_data[j, :, :, i], in_range=(p1, p99))
+
+    return arr_normalizer(geo_data), arr_normalizer(geo_enhanced)
+
+def plot_msi_image(filename: str,
+                   band_list: list,
+                   ax: plt.Axes=None) -> None:
+    """
+    Creates image plots for 3 channels images.
+    :param filename: path to the tif image file
+    :param band_list: contains indices of bands to be used to create 3-channel images
+    :param fig_size: contains dimensions of the 2D figure size
+    """
+    
+    assert len(band_list) == 3, "Incorrect number of channels"
+    img_data = rio.open(filename).read()
+    img_data = np.transpose(img_data, axes=[1, 2, 0])
+    rgb_img_data = img_data[:, :, band_list]
+    rgb_img_data = np.sqrt(rgb_img_data)
+    norm_rgb_img_data = arr_normalizer(rgb_img_data)
+
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(6, 6), dpi=100)
+    ax.imshow(norm_rgb_img_data[:, :, [0, 1, 2]])
+    ax.imshow(norm_rgb_img_data)
+    plt.show()
 
 def plot_spectral_index(ax, fig, spindex_arr, spindex_name=""):
     
@@ -123,7 +192,7 @@ def plot_spectral_indices(input_file):
             path directory to the raster file
     """
     ### Get data to plot
-    spindices, RGB = spt.spectral_indices(input_file)
+    spindices, RGB = spt.calc_spectral_indices(input_file)
     
     ### Normalize the bands and get the RGB image array
     red, green, blue = RGB
@@ -141,7 +210,7 @@ def plot_spectral_indices(input_file):
     ax[0].set_title("True Color Image (RGB Original)")
     ax[0].axis("off")
     ### Plot enhanced RGB imagery
-    _, _, data_enhanced = spt.get_s2_processed_l1(input_file)
+    _, _, data_enhanced = get_s2_processed_l1(input_file)
     ax[1].imshow(data_enhanced[:, :, 0:3], cmap="terrain")
     ax[1].set_title("True Color Image (RGB Enhanced)")
     ax[1].axis("off")
