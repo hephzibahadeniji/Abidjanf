@@ -17,6 +17,7 @@ archive
 data-in/*
 data-out/*
 .DS_Store
+locals
 
 # Distribution / packaging
 .Python
