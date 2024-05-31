@@ -1,3 +1,5 @@
+rm(list=ls())
+
 source("load_path.R", echo=FALSE)
 source("~/Abidjan/load_path.R", echo=FALSE)
 
@@ -259,6 +261,18 @@ average_tpr <- df %>%
   group_by(health_district) %>%
   summarise(avg_tpr = mean(tpr, na.rm = TRUE))
 
+df_abidjan1[1:(nrow(df_abidjan1) - 5), ]
+average_tpr <- left_join(average_tpr, df_abidjan1, by= c("health_district" = "NOM"))
+ggplot()+
+  geom_sf(data = average_tpr, aes(geometry =geometry, fill =overall_rainfall))+
+  geom_text_repel(data =average_tpr, 
+                  aes(label=str_to_sentence(NOM), geometry=geometry), color ='black',
+                  stat = "sf_coordinates", min.segment.length = 0, size = 3.5, force = 1)+
+  scale_fill_continuous(name = "TPR", low = "lightyellow", high = "marron")+
+  labs(title = "Average Test Positivity Rate (2017-2022) ",
+       fill = "TPR", x = "", y= "")+
+  map_theme()
+
 #Abidjan_var <- read.csv(file.path(AbidjanDir, "Abidjan Data Variables.csv"))
 #joined_df <- left_join(Abidjan_var, average_tpr, by = c("HealthDistrict" = "health_district")) #, all.x = TRUE)
 #write.csv(joined_df, file.path(AbidjanDir, "Abidjan Data Variables.csv"), row.names = FALSE)
@@ -278,215 +292,3 @@ ggplot(check, aes(x=year, y =incidence_adjusted3, color =health_district))+
 
 ggsave(paste0(plots, "/", 'Jan_18_2024', "/", Sys.Date(), 
               '_incidence_adjusted_Abidjan_2022.pdf'),  width = 11, height =7)
-# 
-# abidjan_malaria <- readRDS("~/Abidjan/ts_retro_civ.rds")
-# shapefilesCIV <- readRDS("~/shapefilesCIV.rds")
-# abidjan_dhs <- readRDS("~/dhs_data.rds")
-# View(abidjan_malaria)
-# View(shapefilesCIV)
-# view(abidjan_dhs)
-# 
-# library(sf)
-# library(ggplot2) 
-# library(ggrepel) 
-# 
-# admin0_shp <- shapefilesCIV[["Admin0_shp"]]
-# admin0_sf <- st_as_sf(admin0_shp)
-# ggplot() +
-#   geom_sf(data = admin0_sf) +
-#   theme_minimal()
-# 
-# admin1_shp <- shapefilesCIV[["Admin1_shp"]]
-# admin1_sf <- st_as_sf(admin1_shp)
-# ggplot() +
-#   geom_sf(data = admin1_shp) +
-#   theme_minimal()
-# View(admin1_shp)
-# 
-# admin2_shp <- shapefilesCIV[["Admin2_shp"]]
-# admin2_sf <- st_as_sf(admin2_shp)
-# ggplot() +
-#   geom_sf(data = admin2_shp) +
-#   theme_minimal()
-# View(admin2_shp)
-# #result is 31 regions in 12 districts and 2 districts.
-# 
-# admin3_shp <- shapefilesCIV[["Admin3_shp"]]
-# admin3_sf <- st_as_sf(admin3_shp)
-# ggplot() +
-#   geom_sf(data = admin3_shp) +
-#   theme_minimal()
-# View(admin3_shp)
-# #result is further broken into departments
-# 
-# admin4_shp <-shapefilesCIV[["Admin4_shp"]]
-# admin4_sf <- st_as_sf(admin4_shp)
-# ggplot() +
-#   geom_sf(data = admin4_shp) +
-#   theme_minimal() +
-#   ggtitle("Cote d'Ivoire Sub-perfectures")
-# 
-# View(admin4_shp)
-# #result is further broken into sub-perfectures
-# 
-# 
-# admin4_shp <- shapefilesCIV[["Admin4_shp"]]
-# admin4_sf <- st_as_sf(admin4_shp)
-# target_district <- "Abidjan"  
-# abidjan_data <- admin4_sf[admin4_sf$NAME_1 == target_district, ]
-# ggplot() +
-#   geom_sf(data = abidjan_data) +
-#   theme_minimal() +
-#   ggtitle(paste("Abidjan Autonomous District and Sub-perfectures"))
-# #result is Abidjan and its sub-perfectures
-# 
-# facies_shp <- shapefilesCIV[["facies_shp"]]
-# facies_sf <- st_as_sf(facies_shp)
-# ggplot() +
-#   geom_sf(data = facies_shp) +
-#   theme_minimal()
-# View(facies_shp)
-# 
-# healthdis_shp <- shapefilesCIV[["health_districts_shp"]]
-# healthdis_sf <- st_as_sf(healthdis_shp)
-# ggplot() +
-#   geom_sf(data = healthdis_shp) +
-#   theme_minimal()
-# View(healthdis_shp)
-# #result is healthdistricts names and shape
-# 
-# healthdis_shp2 <- shapefilesCIV[["health_districts_coarse_shp"]]
-# healthdis_sf2 <- st_as_sf(healthdis_shp2)
-# ggplot() +
-#   geom_sf(data = healthdis_shp2) +
-#   theme_minimal()
-# View(healthdis_shp2)
-# #result is healthdistricts names and shape
-# 
-# 
-# healthreg_shp <- shapefilesCIV[["health_regions_shp"]]
-# healthreg_sf <- st_as_sf(healthreg_shp)
-# ggplot() +
-#   geom_sf(data = healthreg_shp) +
-#   theme_minimal()
-# View(healthreg_shp)
-# #result is health regions list: only 2 are Abidjan
-# 
-# healthreg_shp <- shapefilesCIV[["health_regions_shp"]]
-# healthreg_sf <- st_as_sf(healthreg_shp)
-# regions <- c("ABIDJAN 1", "ABIDJAN 2")
-# abidjan_healthmap <- healthreg_sf[healthreg_sf$health_region %in% regions, ]
-# ggplot() +
-#   geom_sf(data = abidjan_healthmap) +
-#   theme_minimal() +
-#   ggtitle("Abidjan health regions")
-# 
-# 
-# 
-# healthdis_shp <- shapefilesCIV[["health_districts_shp"]]
-# healthdis_sf <- st_as_sf(healthdis_shp)
-# abidjan_districts <- c("ABOBO EST", "ABOBO OUEST", "ANYAMA", "ADJAME-PLATEAU-ATTECOUBE", "COCODY BINGERVILLE", "KOUMASSI", "PORT BOUET-VRIDI","YOPOUGON-EST", "YOPOUGON-OUEST-SONGON", "TREICHVILLE-MARCORY")
-# abj_districts_map<- healthdis_sf[healthdis_sf$NOM %in% abidjan_districts, ]
-# View(abj_districts_map)
-# 
-# map_theme <- function() {
-#   theme(axis.text.x = ggplot2::element_blank(),
-#         axis.text.y = ggplot2::element_blank(),
-#         axis.ticks = ggplot2::element_blank(),
-#         rect = ggplot2::element_blank(),
-#         plot.background = ggplot2::element_rect(fill = "white", colour = NA), 
-#         plot.title = element_text(hjust = 0.5),
-#         legend.title.align = 0.5,
-#         legend.title = element_text(size = 8, colour = 'black'), 
-#         legend.text = element_text(size = 8, colour = 'black'),
-#         legend.key.height = unit(0.65, "cm"))
-# }
-# con_gplot <- function(df) {
-#   ggplot() +
-#     geom_sf(data = df) +
-#     map_theme() +
-#     geom_label_repel(
-#       data = df,
-#       aes(label = NOM, x = st_coordinates(df)$X, y = st_coordinates(df)$Y),
-#       box.padding = 0.5, # Adjust as needed
-#       point.padding = 0.5, # Adjust as needed
-#       min.segment.length = 0,
-#       size = 3, # Adjust label size as needed
-#       color = 'black',
-#       force = 1
-#     ) +
-#     xlab('') +
-#     ylab('')
-# }
-#   
-# con_gplot(abj_districts_map) +
-#     ggtitle("Map of Abidjan Health Districts")
-#   
-# 
-# 
-# 
-# 
-# healthdis_shp <- shapefilesCIV[["health_districts_shp"]]
-# healthdis_sf <- st_as_sf(healthdis_shp)
-# abidjan_districts <- c("ABOBO EST", "ABOBO OUEST", "ANYAMA", "ADJAME-PLATEAU-ATTECOUBE", "COCODY BINGERVILLE", "KOUMASSI", "PORT BOUET-VRIDI","YOPOUGON-EST", "YOPOUGON-OUEST-SONGON", "TREICHVILLE-MARCORY")
-# abj_districts_map<- healthdis_sf[healthdis_sf$NOM %in% abidjan_districts, ]
-# map_theme <- function() {
-#   theme(axis.text.x = ggplot2::element_blank(),
-#         axis.text.y = ggplot2::element_blank(),
-#         axis.ticks = ggplot2::element_blank(),
-#         rect = ggplot2::element_blank(),
-#         plot.background = ggplot2::element_rect(fill = "white", colour = NA), 
-#         plot.title = element_text(hjust = 0.5),
-#         legend.title.align = 0.5,
-#         legend.title = element_text(size = 8, colour = 'black'), 
-#         legend.text = element_text(size = 8, colour = 'black'),
-#         legend.key.height = unit(0.65, "cm"))
-# }
-# 
-# con_gplot <- function(df, label) {
-#   ggplot() +
-#     geom_sf(data = df) +
-#     map_theme() +
-#     geom_text_repel(
-#       data = df,
-#       aes(label = !!label, geometry = geometry),
-#       color = 'black',
-#       stat = "sf_coordinates", 
-#       min.segment.length = 0, size = 1.5, force = 1, max.overlaps = Inf
-#     ) +
-#     xlab('') +
-#     ylab('')
-# }
-# 
-# con_gplot(abj_districts_map, label = "NOM") +
-#   ggtitle("Map of Abidjan Health Districts")
-#  
-# 
-# 
-# library(dplyr)
-# 
-# abidjan_oct22 <- abidjan_malaria%>%
-#   filter(health_district %in% abidjan_districts, date == '2022-10-01')
-# print(abidjan_oct22)
-# 
-# 
-# ggplot(abidjan_oct22, aes(x = health_district, y = tpr)) +
-#   geom_bar(stat = "identity", fill = "skyblue") +
-#   theme_minimal() +
-#   ggtitle("Test Positivity Rate in Abidjan Districts (October 2022)") +
-#   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-# 
-# healthdis_shp <- shapefilesCIV[["health_districts_shp"]]
-# healthdis_sf <- st_as_sf(healthdis_shp)
-# abidjan_districts <- c("ABOBO EST", "ABOBO OUEST", "ANYAMA", "ADJAME-PLATEAU-ATTECOUBE", "COCODY BINGERVILLE", "KOUMASSI", "PORT BOUET-VRIDI","YOPOUGON-EST", "YOPOUGON-OUEST-SONGON", "TREICHVILLE-MARCORY")
-# abj_districts_map<- healthdis_sf[healthdis_sf$NOM %in% abidjan_districts, ]
-# View(abj_districts_map)
-# 
-# map <- left_join(abj_districts_map, abidjan_oct22, by = c("NOM"= "health_region"))
-# ggplot(map) +
-#   geom_sf(aes(fill="tpr")) +
-#   theme_minimal()+
-#   ggtitle("Map of Abidjan Health Districts and TPR")
-# 
-# 
-
