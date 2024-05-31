@@ -111,8 +111,10 @@ def enhance_s2_rgb(raster):
     for i in range(data.shape[-1]):
         p2, p98 = np.percentile(data[:, :, i], (2, 98))
         data_enhanced[:, :, i] = exposure.rescale_intensity(data[:, :, i], in_range=(p2, p98))
+        data_enhanced[:, :, i] = arr_normalizer(data_enhanced[:, :, i])
+        data[:, :, i] = arr_normalizer(data[:, :, i])
 
-    return arr_normalizer(data), arr_normalizer(data_enhanced)
+    return data, data_enhanced
 
 def geo_enhance_s2_rgb(geo_data):
     ## Preprocessing
@@ -121,8 +123,10 @@ def geo_enhance_s2_rgb(geo_data):
         for j in range(geo_data.shape[0]):
             p1, p99 = np.percentile(geo_data[j, :, :, i], (1, 99))
             geo_enhanced[j, :, :, i] = exposure.rescale_intensity(geo_data[j, :, :, i], in_range=(p1, p99))
+            geo_enhanced[:, :, i] = arr_normalizer(geo_enhanced[:, :, i])
+            geo_data[j, :, :, i] = arr_normalizer(geo_data[j, :, :, i])
 
-    return arr_normalizer(geo_data), arr_normalizer(geo_enhanced)
+    return geo_data, geo_enhanced
 
 def plot_msi_image(filename: str,
                    band_list: list,
