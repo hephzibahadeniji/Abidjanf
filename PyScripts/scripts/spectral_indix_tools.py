@@ -138,7 +138,7 @@ def calc_spectral_indices(input_file: str, verbose: bool=False) -> tuple:
 
     ### Load the raster image
     if not input_file.endswith(".tif"):
-        return "S\nSorry! The file entered is not for a raster image."
+        return "\nSorry! The file entered is not for a raster image."
     else:
         raster = s2u.load_raster(input_file)
 
