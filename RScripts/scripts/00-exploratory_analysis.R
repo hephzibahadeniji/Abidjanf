@@ -1,6 +1,5 @@
 rm(list=ls())
 
-source("load_path.R", echo=FALSE)
 source("~/Abidjan/load_path.R", echo=FALSE)
 
 
@@ -261,14 +260,15 @@ average_tpr <- df %>%
   group_by(health_district) %>%
   summarise(avg_tpr = mean(tpr, na.rm = TRUE))
 
-df_abidjan1[1:(nrow(df_abidjan1) - 5), ]
-average_tpr <- left_join(average_tpr, df_abidjan1, by= c("health_district" = "NOM"))
+tpr_regions <- df_abidjan1[1:(nrow(df_abidjan1) - 5), ]
+tpr_plottingdata <- inner_join(average_tpr, tpr_regions, by= c("health_district" = "NOM"))
+
 ggplot()+
-  geom_sf(data = average_tpr, aes(geometry =geometry, fill =overall_rainfall))+
-  geom_text_repel(data =average_tpr, 
-                  aes(label=str_to_sentence(NOM), geometry=geometry), color ='black',
+  geom_sf(data = tpr_plottingdata, aes(geometry =geometry, fill =avg_tpr))+
+  geom_text_repel(data =tpr_plottingdata, 
+                  aes(label=str_to_sentence(health_district), geometry=geometry), color ='black',
                   stat = "sf_coordinates", min.segment.length = 0, size = 3.5, force = 1)+
-  scale_fill_continuous(name = "TPR", low = "lightyellow", high = "marron")+
+  scale_fill_continuous(name = "TPR", low = "lightyellow", high = "maroon")+
   labs(title = "Average Test Positivity Rate (2017-2022) ",
        fill = "TPR", x = "", y= "")+
   map_theme()

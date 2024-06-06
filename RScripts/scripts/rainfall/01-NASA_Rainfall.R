@@ -1,8 +1,6 @@
 source("load_path.R", echo=FALSE) 
 
 
-
-
 ########## Yearly rainfall 2013 ############
 
 pattern2013 <- paste0("2013[0-9]+.tif")

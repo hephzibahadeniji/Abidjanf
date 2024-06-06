@@ -14,6 +14,9 @@ small_set <- sf::st_read(file.path(SmallsetDir, "Small settlement area.shp"))
 slum_data <- read.csv(file.path(AbidjanDir, "Abidjan slums.csv"))
 Abi_griddata <- st_read(Abi_grid)
 
+slum_data <- slum_data[complete.cases(slum_data$Longitude, slum_data$Latitude), ]
+slum_sf <-  st_as_sf(slum_data, coords = c("Longitude", "Latitude"), crs = 4326)
+
 
 #layer with small settlements: Small settlements are likely rural/suburban areas
 
@@ -26,10 +29,6 @@ ggplot()+
  
 
 #plot Abidjan slums
-
-slum_data <- slum_data[complete.cases(slum_data$Longitude, slum_data$Latitude), ]
-slum_sf <-  st_as_sf(slum_data, coords = c("Longitude", "Latitude"), crs = 4326)
-
 
 ggplot()+
   geom_sf(data = df_abidjan1)+
@@ -122,11 +121,16 @@ slum_counts <- slum_districts %>%
 #joined_df <- left_join(Abidjan_var, slum_counts, by = c("HealthDistrict" = "NOM")) #, all.x = TRUE)
 #write.csv(joined_df, file.path(AbidjanDir, "Abidjan Data Variables.csv"), row.names = FALSE)
 
-  
-ggplot() +
-  geom_sf(data = df_abidjan1, aes()) + 
-  geom_sf(data = slum_counts, aes(fill = Slum_Count), color = "black", size = 0.2) + 
-  scale_fill_gradient(name = "Slum Count", low = "lightyellow", high = "brown") + 
-  labs(title = "Slum Count by Health District") +
-  map_theme()
+slum_sf$shapes <- "Slums"
 
+ggplot() +
+  geom_sf(data = slum_counts, aes(geometry = geometry, fill = Slum_Count), color = "black", size = 0.2) + 
+  geom_text_repel(data = slum_counts, aes(label = str_to_sentence(NOM), geometry = geometry), 
+                  color = 'black',stat = "sf_coordinates", min.segment.length = 0, size = 3.5, force = 1) +
+  geom_sf(data = slum_sf, aes(geometry = geometry, shape = shapes), color = "black", size = 1) +
+  scale_fill_gradient(name = "Slum Count", low = "lightyellow", high = "brown") + 
+  scale_shape_manual(name = "", values = c("Slums" = 16)) + 
+  labs(title = "Slum Count in Abidjan Health Districts", x= "", y = "") +
+  theme_void() +
+  map_theme()
+ 
