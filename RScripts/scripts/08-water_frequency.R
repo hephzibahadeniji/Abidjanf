@@ -48,15 +48,17 @@ plot_allQmode <- waterfreq_data %>%
 colnames(plot_allQmode)[-1] <- sapply(waterfreq, extract_info)
 
 
+
+####calculate mean across all quarters and write to variable summary
+row_means <- rowMeans(plot_allQmean[, -1], na.rm = TRUE)
+plot_allQmean$overall_meanWF <-row_means
+
 #write.csv(plot_allQmean, file.path(WaterFreqDir, "mean_water_frequency.csv"), row.names = FALSE)
 #write.csv(plot_allQmode, file.path(WaterFreqDir, "mode_water_frequency.csv"), row.names = FALSE)
 
 
-####calculate mean across all quarters and write to variable summary
-# row_means <- rowMeans(plot_allQmean[, -1], na.rm = TRUE)
-# plot_allQmean$mean_WF <-row_means
 # Variables <- read.csv(file.path(AbidjanDir, "Abidjan Data Variables.csv"))
-# Variables$mean_WF <- plot_allQmean$mean_WF
+# Variables$mean_WF <- plot_allQmean$overall_meanWF
 # write.csv(Variables,file.path(AbidjanDir, "Abidjan Data Variables.csv"), row.names = FALSE)
   
 
@@ -185,10 +187,6 @@ ggplot() +
   theme_manuscript() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-
-
-
-
 #mean water frequency per quarter
 ggplot()+
   geom_sf(data = plot_all_mean, aes(geometry =geometry, fill= Value))+
@@ -203,6 +201,20 @@ ggplot()+
   facet_wrap(~Quarter_Value)+
   labs(title = "Water Frequency in Abidjan 2013-2023", fill = "Avg. Water Frequency", x = NULL, y = NULL) +
   map_theme()
+
+
+#plot map of overall mean WF 
+ggplot()+
+  geom_sf(data = all_mean, aes(geometry = geometry, fill =overall_meanWF), 
+          color = "black", size = 0.2)+
+  geom_text_repel(data =all_mean, 
+                  aes(label=str_to_sentence(Healthdistrict), geometry=geometry), color ='black',
+                  stat = "sf_coordinates", min.segment.length = 0, size = 3.5, force = 1)+
+  scale_fill_gradient(name = "Water Frequency", low = "lightyellow", high = "darkblue") + 
+  labs(title = "Average Water Freqency (2013-2023)", x= "", y = "") +
+  map_theme()
+
+  
 
 
 ############################################################################################################

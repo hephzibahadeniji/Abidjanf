@@ -65,17 +65,54 @@ for (col in names(scoring_dataset)) {
   }
 }
 
-# ###reshape non-normalized data for plotting (Optional)
-# plotting_data2 <- scoring_dataset %>%
-#   dplyr::select(HealthDistrict, 
-#                 meanEVI2013_23, 
-#                 avg_rainfall,
-#                 avg_tpr,
-#                 Slum_Count,
-#                 mean_WF) %>% 
-#   reshape::melt(id.vars = c("HealthDistrict")) %>% 
-#   mutate(class = cut(value, seq(0,1, length.out = 6), include.lowest = T)) %>% 
-#   inner_join(df_abidjan1, by = c("HealthDistrict" = "NOM"))
+###reshape non-normalized data for plotting (Optional)
+plotting_data2 <- scoring_dataset %>%
+  dplyr::select(HealthDistrict,
+                meanEVI2013_23,
+                avg_rainfall,
+                avg_tpr,
+                Slum_Count,
+                mean_WF) %>%
+  reshape::melt(id.vars = c("HealthDistrict")) %>%
+  #mutate(class = cut(value, seq(0,1, length.out = 6), include.lowest = T)) %>%
+  mutate(class = cut(value, seq(0,5037.5968050, length.out =6), include.lowest = T)) %>%
+  inner_join(df_abidjan1, by = c("HealthDistrict" = "NOM"))
+
+###reshape non-normalized data for plotting 
+plotting_data3 <- scoring_dataset %>%
+  dplyr::select(HealthDistrict,
+                meanEVI2013_23,
+                avg_rainfall,
+                avg_tpr,
+                Slum_Count,
+                mean_WF) %>%
+  reshape::melt(id.vars = c("HealthDistrict")) %>%
+  mutate(class = case_when(
+    variable == "meanEVI2013_23" ~ cut(value, seq(610.5935, 5037.5968, length.out = 6), include.lowest = TRUE),
+    variable == "avg_rainfall" ~ cut(value, seq(4.674972, 4.841463, length.out = 6), include.lowest = TRUE),
+    variable == "avg_tpr" ~ cut(value, seq(0.4087708, 0.7311113, length.out = 6), include.lowest = TRUE),
+    variable == "Slum_Count" ~ cut(value, seq(1, 23, length.out = 6), include.lowest = TRUE),
+    variable == "mean_WF" ~ cut(value, seq(0, 13.0921409, length.out = 6), include.lowest = TRUE),
+    TRUE ~ NA_character_)) %>%
+  inner_join(df_abidjan1, by = c("HealthDistrict" = "NOM"))
+
+plotting_data4 <- scoring_dataset %>%
+  dplyr::select(HealthDistrict,
+                meanEVI2013_23,
+                avg_rainfall,
+                avg_tpr,
+                Slum_Count,
+                mean_WF) %>%
+  reshape::melt(id.vars = c("HealthDistrict")) %>%
+  mutate(class = case_when(
+    variable == "meanEVI2013_23" ~ cut(value, seq(0, 5038, length.out = 6), include.lowest = TRUE, include.highest = T),
+    variable == "avg_rainfall" ~ cut(value, seq(0, 4.9, length.out = 6), include.lowest = TRUE, include.highest = T),
+    variable == "avg_tpr" ~ cut(value, seq(0, 0.75, length.out = 6), include.lowest = TRUE, include.highest = T),
+    variable == "Slum_Count" ~ cut(value, seq(0, 23, length.out = 6), include.lowest = TRUE, include.highest = T),
+    variable == "mean_WF" ~ cut(value, seq(0, 13.1, length.out = 6), include.lowest = TRUE, include.highest = T),
+    TRUE ~ NA_character_)) %>%
+  inner_join(df_abidjan1, by = c("HealthDistrict" = "NOM"))
+
 
 
 # Data normalization, Scoring, and manipulations 
@@ -147,7 +184,7 @@ plotting_scoring_data <- scoring_dataset2 %>%
 
 
 plottingdata <- scoring_dataset2 %>% 
-  dplyr::select(HealthDistrict, model01:model26 ) %>% 
+  dplyr::select(HealthDistrict, model21:model26 ) %>% ##change to model01:model26
   reshape2::melt(id.vars = c("HealthDistrict")) %>% 
   inner_join(df_abidjan1, by = c("HealthDistrict" = "NOM")) %>% 
   group_by(variable) %>%
@@ -194,13 +231,33 @@ ggplot(data = scoring_dataset, aes(x = meanEVI2013_23))+ ##change variable of in
   theme(panel.border = element_blank())
 
 ### post normalization
-ggplot(data = plotting_scoring_data, aes(x = value))+
+# ggplot(data = plotting_scoring_data, aes(x = value))+
+#   stat_ecdf(geom = "step", color = "brown", linewidth = 1)+
+#   facet_wrap(~variable, labeller = labeller(variable = new_names), scales = "free") + 
+#   labs(title = "After Normalization",
+#        x = "")+
+#   theme_manuscript() +
+#   theme(panel.border = element_blank())
+
+ggplot(data = df_normalized, aes(x = mean_WF_normal_score ))+ ##change variable of interest
   stat_ecdf(geom = "step", color = "brown", linewidth = 1)+
-  facet_wrap(~variable, labeller = labeller(variable = new_names), scales = "free") + 
-  labs(title = "After Normalization",
-       x = "")+
+  #facet_wrap(~variable, labeller = labeller(variable = new_names), scales = "free") + 
+  labs(title = "Water Frequency After Normalization",
+       x = "normalized WF score")+
   theme_manuscript() +
   theme(panel.border = element_blank())
+
+##### Variable maps using normalized values
+dfnormalized_sf <- left_join(df_normalized, df_abidjan1, by = c("HealthDistrict" = "NOM"))
+
+ggplot()+
+  geom_sf(data = dfnormalized_sf, aes(geometry = geometry, fill = Slum_Count_normal_score))+ #change to variable of interest
+  #scale_fill_gradient(name = "", low = "lightyellow", high = "darkblue") + 
+  #scale_fill_continuous(name = "TPR", low = "lightyellow", high = "maroon")+
+  #scale_fill_continuous(name = "EVI", low = "#F6E0b3", high = "darkgreen")+
+  scale_fill_gradient(name = "", low = "lightyellow", high = "brown") + 
+  labs(title = "Slum Count with normalized values", x ="", y= "")+
+  map_theme()
 
 
 ###side by side comparison (pre vs post normalization for each variable)
@@ -232,7 +289,7 @@ ggplot(data = df_abidjan1)+
   geom_sf(color = "black", fill = "white")+
   geom_sf(data = plottingdata, aes(geometry = geometry, fill = class))+  #class is NA, when there are NA values
   geom_sf_text(data = plottingdata, aes(geometry = geometry, label =  rank), size = 3 )+ 
-  facet_wrap(~variable, labeller = label_parsed, ncol = 3) +
+  facet_wrap(~variable, labeller = label_parsed, ncol = 5) +
   scale_fill_discrete(drop=FALSE, name="Rank(Increasing Risk)", type = palettes_00)+
   #scale_fill_manual(values = palettes)+
   labs(subtitle='', title='Health District Ranking of Malaria Risks',
@@ -241,24 +298,52 @@ ggplot(data = df_abidjan1)+
   theme_void()+
   map_theme()
 
+
 ###ranking with normalized values- 3
 #plot1 <-
   ggplot(data = df_abidjan1)+
   geom_sf(color = "black", fill = "white")+
   geom_sf(data = plottingdata, aes(geometry = geometry, fill = rank))+  #class is NA, when there are NA values
   geom_sf_text(data = plottingdata, aes(geometry = geometry, label =  rank), size = 3 )+ 
-  facet_wrap(~variable, labeller = label_parsed, ncol = 5) +
+  facet_wrap(~variable, labeller = label_parsed, ncol = 3) +
   scale_fill_gradient(low = palettes_00[1], high = palettes_00[length(palettes_00)], 
                       name="Rank(Increasing Risk)")+
-  labs(subtitle='', title='Health District Ranking of Malaria Risks',
-       fill = "Rank(Increasing Risk)")+
-  theme(panel.background = element_blank(), 
+    # labs(title = "Health District Ranking of Malaria Risks",
+    #      caption = "model01 = TPR + EVI + SC + RF + WF \nmodel02 = TPR + EVI + SC + RF \nmodel03 = EVI + SC + RF + WF \n model04 = TPR + SC + RF + WF \nmodel05 = TPR + EVI + RF + WF \nmodel06 = TPR + EVI + SC + WF \nmodel07 = EVI + SC + RF \nmodel08 = TPR + SC + RF \nmodel09 = TPR + EVI + RF \nmodel10 = TPR + EVI + SC \nWhere TPR= test positivity rate, EVI = mean enhanced vegetation index, RF = rainfall, WF= water frequency and SC = slum count
+    #      ", 
+    #      fill = "Rank (Increasing Risk)") +
+#     labs(title = "Health District Ranking of Malaria Risks",
+#          caption = "model11 = SC + RF + WF 
+# model12 = EVI + RF + WF 
+# model13 = EVI + SC + WF 
+# model14 = TPR + RF + WF 
+# model15 = TPR + SC + WF 
+# model16 = TPR + EVI + WF 
+# model17 = SC + RF
+# model18 = EVI + RF
+# model19 = EVI + SC
+# model20 = TPR + RF
+# Where TPR= test positivity rate, EVI = mean enhanced vegetation index, RF = rainfall, WF= water frequency and SC = slum count", 
+#          fill = "Rank (Increasing Risk)") +
+  labs(title = "Health District Ranking of Malaria Risks",
+                caption = "model21 = TPR + SC
+model22 = TPR + EVI
+model23 = RF + WF 
+model24 = SC + WF 
+model25 = EVI + WF 
+model26 = TPR + WF 
+Where TPR= test positivity rate, EVI = mean enhanced vegetation index, RF = rainfall, WF= water frequency and SC = slum count",
+                fill = "Rank (Increasing Risk)") +
+  
+    theme(panel.background = element_blank(), 
         plot.title = element_text(size = 20, face = "bold"),
         axis.text = element_text(size = 12),
         axis.title = element_text(size = 14)) +
   #theme(panel.background = element_blank(), size = 20)+
   theme_void()+
   map_theme()
+  
+
 
 
 ##health district ranking, model
@@ -309,27 +394,31 @@ plot2 <- ggplot()+
 
 #### with extrapolated values
 #non-normalized
-plot3 <- ggplot()+
-  geom_sf(data = plotting_data2, aes(geometry=geometry, fill =class), color = "gray")+
+plot3 <-  
+  ggplot()+
+  geom_sf(data = plotting_data2, aes(geometry=geometry, fill =value), color = "gray")+ #change to class
   facet_wrap(~variable, labeller = labeller(variable = new_names))+
-  scale_fill_discrete(drop = FALSE, name = "Class(Increased values)", type = palettes_00)+
-  labs(title = "Malaria risk with non-normalized variables + imputed mean", fill = "")+
+  scale_fill_continuous(name="Value(Increasing Risk)", low = "#F6E0b3", high = "maroon")+
+ # scale_fill_discrete(drop = FALSE, name = "Class(Increasing values)", type = palettes_00)+
+  labs(title = "Malaria Risk Map with non-normalized variables", fill = "")+
   theme(panel.background = element_blank(), size = 20) +
   theme_void()+
   map_theme()
   
-
 #normalized
-plot4 <- ggplot()+
-  geom_sf(data = plotting_scoring_data, aes(geometry=geometry, fill=class), color = "gray")+
+plot4 <- 
+  ggplot()+
+  geom_sf(data = plotting_scoring_data, aes(geometry=geometry, fill=value), color = "gray")+
   facet_wrap(~variable, labeller = labeller(variable = new_names))+
-  scale_fill_discrete(drop = FALSE, name = "Class(Increased risk)", type = palettes_00)+
-  labs(title = "Malaria risk with normalized variables + imputed mean", fill = "")+
+  scale_fill_continuous(name="Value(Increasing Risk)", low = "#F6E0b3", high = "maroon")+
+  #scale_fill_discrete(drop = FALSE, name = "Class(Increasing risk)", type = palettes_00)+
+  labs(title = "Malaria Risk Map with normalized variables", fill = "")+
   theme(panel.background = element_blank(), size = 20) +
   theme_void()+
   map_theme()
 
-grid.arrange(plot1, plot2, plot4, ncol=2) 
+library(gridExtra)
+grid.arrange(plot3, plot4, ncol=2) 
   
   
   
