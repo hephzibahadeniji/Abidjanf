@@ -1,7 +1,7 @@
-# Abidjan Urban Microstratification Project Codebase 
+# Abidjan and Nigeria Urban Microstratification Project Codebase 
 
 ## Overview
-Welcome to the README for the Abidjan urban malaria microstratification project. This repository hosts a collection of R and Python scripts to analyse a wide range of datasets to understand malaria risk and inform a deprioritization approach for a public health intervention. Our analyses leverage data on real estate dynamics, settlement types, NASA-derived environmental indices like the Enhanced Vegetation Index (EVI) and rainfall, as well as raster-based spatial analyses. Additionally, we perform exploratory analyses focusing on the relationships between settlements, administrative boundaries, and road infrastructure. 
+Welcome to the README for the Abidjan and Nigeria urban malaria microstratification project. This repository hosts a collection of R and Python scripts to analyse a wide range of datasets to understand malaria risk and inform a deprioritization approach for a public health intervention. Our analyses leverage data on real estate dynamics, settlement types, NASA-derived environmental indices like the Enhanced Vegetation Index (EVI) and rainfall, as well as raster-based spatial analyses. Additionally, we perform exploratory analyses focusing on the relationships between settlements, administrative boundaries, and road infrastructure. We are analyzing data from Nigeria to develop a machine learning model for settlement classification.
 
 
 
