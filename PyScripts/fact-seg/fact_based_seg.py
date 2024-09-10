@@ -1,7 +1,7 @@
 """
 Factorization based segmentation
 """
-
+import os
 import time
 import numpy as np
 from numpy import linalg as LA
@@ -106,30 +106,54 @@ if __name__ == '__main__':
     time0 = time.time()
     # An example of using fact_based_seg
     # read image
-    img_path = './M1.pgm'
+    # img_path = './M3.pgm'
+    # img_path = "./inspiring-truth.jpeg"
+    # img_path = "./sample_image_4.jpeg"
+    img_path = "./grayscale_cat.jpg"
     img = io.imread(img_path)
+    print(img.shape)
+    
+    output_dir = r"./image_texture/FSeg"  
+    # img_size = 1024
 
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    
     # define filter bank and apply to image. for color images, convert rgb to grey scale and then apply filter bank
     filter_list = [('log', .5, [3, 3]), ('log', 1, [5, 5]),
                    ('gabor', 1.5, 0), ('gabor', 1.5, math.pi/2), ('gabor', 1.5, math.pi/4), ('gabor', 1.5, -math.pi/4),
                    ('gabor', 2.5, 0), ('gabor', 2.5, math.pi/2), ('gabor', 2.5, math.pi/4), ('gabor', 2.5, -math.pi/4)
                    ]
 
-    filter_out = image_filtering(img, filter_list=filter_list)
-
-    # include original image as one band
-    Ig = np.concatenate((np.float32(img.reshape((img.shape[0], img.shape[1], 1))), filter_out), axis=2)
+    # Apply Filters to each channel
+    if (len(img.shape) >= 3) & (img.shape[-1] >= 3):
+        Ig = np.empty((img.shape[0], img.shape[1], 0), dtype=np.float32)
+        for channel in range(img.shape[2]):
+            filter_out = image_filtering(img[:, :, channel], filter_list=filter_list)
+            Ig = np.concatenate((Ig, img[:, :, channel:channel+1], filter_out), axis=2)
+    # Include original image as one band
+    else:
+        filter_out = image_filtering(img, filter_list=filter_list)
+        Ig = np.concatenate((np.float32(img.reshape((img.shape[0], img.shape[1], 1))), filter_out), axis=2)
 
     # run segmentation. try different window size, with and without nonneg constraints
     seg_out = Fseg(Ig, ws=25, segn=0, omega=.045, nonneg_constraint=True)
+    
+    # Save composite texture features
+    # output_feature_filename = f"{output_dir}/composite_texture_features_RGB.npy"
+    # np.save(output_feature_filename, seg_out)
 
-    print('\nFSEG runs in %0.2f seconds. \n' % (time.time() - time0))
+    print('\nFSEG runs in %0.2f minutes. \n' % ((time.time() - time0)/60))
 
     # show results
     fig, ax = plt.subplots(ncols=2, sharex=True, sharey=True, figsize=(12, 6))
-    ax[0].imshow(img, cmap='gray')
-    ax[1].imshow(seg_out, cmap='gray')
+    ax[0].imshow(img, cmap='grey')
+    ax[1].imshow(seg_out, cmap='grey')
     ax[0].set_title("Original image")
     ax[1].set_title("Segmented image")
     fig.tight_layout()
     plt.show()
+    
+    # Save visualized composite texture map
+    output_image_filename = f"{output_dir}/example_with_image_cat.png"
+    fig.savefig(output_image_filename, bbox_inches='tight', dpi=300)
