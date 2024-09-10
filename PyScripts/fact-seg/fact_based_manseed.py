@@ -7,7 +7,21 @@ import numpy as np
 from fact_based_seg_filters import image_filtering
 import matplotlib.pyplot as plt
 from scipy import linalg as LAsci
-from skimage import io
+from skimage import io, transform
+
+def resize_image(image, target_size=(1024, 1024)):
+    """
+    Resize the input image to the target size.
+    
+    Args:
+        image: Input image (NumPy array).
+        target_size: Desired output size as a tuple (height, width).
+    
+    Returns:
+        Resized image as a NumPy array.
+    """
+    resized = transform.resize(image, target_size + (image.shape[2],), anti_aliasing=True, preserve_range=True)
+    return resized.astype(np.float32)
 
 def SHcomp(Ig, ws, BinN=11):
     """
@@ -23,7 +37,7 @@ def SHcomp(Ig, ws, BinN=11):
     for i in range(bn):
         b_max = np.max(Ig[:, :, i])
         b_min = np.min(Ig[:, :, i])
-        assert b_max != b_min, "Band %d has only one value!" % i
+        assert b_max != b_min, f"Band {i} has only one value!"
 
         b_interval = (b_max - b_min) * 1. / BinN
         Ig[:, :, i] = np.floor((Ig[:, :, i] - b_min) / b_interval)
@@ -90,21 +104,34 @@ def Fseg(Ig, ws, seeds):
     return seg_label.reshape((N1, N2))
 
 if __name__ == '__main__':
-    time0 = time.time()
+    
     # An example of using fact_based_seg_manseed
-    img_path = './test.png'
+    img_path = './M3.pgm'
+    # img_path = './test.png'
     img = io.imread(img_path)
-
+    # img = resize_image(img)
+    
     # define filter bank and apply to image. for color images, convert rgb to grey scale and then apply filter bank
     filter_list = [('log', .5, [3, 3]), ('log', 1.2, [7, 7])]
 
-    filter_out = image_filtering(img, filter_list=filter_list)
-
     # include original image as one band
-    Ig = np.concatenate((np.float32(img.reshape((img.shape[0], img.shape[1], 1))), filter_out), axis=2)
+    # Ig = np.concatenate((np.float32(img.reshape((image.shape[0], image.shape[1], 1))), filter_out), axis=2)
+    # Ig = np.concatenate((np.float32(image.reshape((image.shape[0], image.shape[1], image.shape[2], 1))), filter_out), axis=2)
+    
+    # Apply Filters to each channel
+    if (len(img.shape) >= 3) & (img.shape[-1] >= 3):
+        Ig = np.empty((img.shape[0], img.shape[1], 0), dtype=np.float32)
+        for channel in range(img.shape[2]):
+            filter_out = image_filtering(img[:, :, channel], filter_list=filter_list)
+            Ig = np.concatenate((Ig, img[:, :, channel:channel+1], filter_out), axis=2)
+    # Include original image as one band
+    else:
+        filter_out = image_filtering(img, filter_list=filter_list)
+        Ig = np.concatenate((np.float32(img.reshape((img.shape[0], img.shape[1], 1))), filter_out), axis=2)
 
     seeds = [[60, 238], [160, 160], [238, 60]]  # provide seeds
 
+    time0 = time.time()
     # run segmentation. try different window size
     seg_out = Fseg(Ig, ws=19, seeds=seeds)
 

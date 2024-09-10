@@ -29,6 +29,8 @@ def plot_bands(image_data, patch_id=None):
         ax.axis('off')
     
     plt.show()
+    
+    return fig
 
 def plot_rgb(image_data, rgb_indices=(3, 2, 1), ax=None):
     """
@@ -51,8 +53,11 @@ def plot_rgb(image_data, rgb_indices=(3, 2, 1), ax=None):
     if ax is not None:
         ax.imshow(rgb_image, cmap="terrain")
     else:
-        plt.figure(figsize=(10, 10))
-        plt.imshow(rgb_image, cmap="terrain")
-        plt.title('RGB True Color Image')
-        plt.axis('off')
+        fig, ax = plt.subplots(figsize=(10, 10))
+        ax.imshow(rgb_image, cmap="terrain")
+        ax.set_title('RGB True Color Image')
+        ax.axis('off')
+        
         plt.show()
+        
+        return fig
